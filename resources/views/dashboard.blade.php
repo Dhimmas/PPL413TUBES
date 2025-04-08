@@ -11,18 +11,54 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @php
                         $features = [
-                            ['title' => 'Profil Pribadi', 'desc' => 'Lihat dan ubah informasi diri kamu.', 'icon' => '👤', 'color' => 'bg-blue-500'],
-                            ['title' => 'Forum Diskusi', 'desc' => 'Diskusi bersama teman dan dosen.', 'icon' => '💬', 'color' => 'bg-green-500'],
-                            ['title' => 'Dashboard', 'desc' => 'Beranda utama aplikasi Studify.', 'icon' => '📊', 'color' => 'bg-purple-500'],
-                            ['title' => 'To-Do List', 'desc' => 'Kelola daftar tugas harianmu.', 'icon' => '📝', 'color' => 'bg-yellow-500'],
-                            ['title' => 'Progress Tracker', 'desc' => 'Pantau perkembangan belajarmu.', 'icon' => '📈', 'color' => 'bg-red-500'],
-                            ['title' => 'Study Goal', 'desc' => 'Tetapkan dan capai tujuan belajar.', 'icon' => '🎯', 'color' => 'bg-pink-500'],
+                            [
+                                'title' => 'Profil Pribadi',
+                                'desc' => 'Lihat dan ubah informasi diri kamu.',
+                                'icon' => '👤',
+                                'color' => 'bg-blue-500',
+                                'route' => route('profile.edit'),
+                            ],
+                            [
+                                'title' => 'Forum Diskusi',
+                                'desc' => 'Diskusi bersama teman dan dosen.',
+                                'icon' => '💬',
+                                'color' => 'bg-green-500',
+                                'route' => '#',
+                            ],
+                            [
+                                'title' => 'Dashboard',
+                                'desc' => 'Beranda utama aplikasi Studify.',
+                                'icon' => '📊',
+                                'color' => 'bg-purple-500',
+                                'route' => '#',
+                            ],
+                            [
+                                'title' => 'To-Do List',
+                                'desc' => 'Kelola daftar tugas harianmu.',
+                                'icon' => '📝',
+                                'color' => 'bg-yellow-500',
+                                'route' => '#',
+                            ],
+                            [
+                                'title' => 'Progress Tracker',
+                                'desc' => 'Pantau perkembangan belajarmu.',
+                                'icon' => '📈',
+                                'color' => 'bg-red-500',
+                                'route' => '#',
+                            ],
+                            [
+                                'title' => 'Study Goal',
+                                'desc' => 'Tetapkan dan capai tujuan belajar.',
+                                'icon' => '🎯',
+                                'color' => 'bg-pink-500',
+                                'route' => '#',
+                            ],
                         ];
                     @endphp
 
                     @foreach ($features as $feature)
-                        <div
-                            class="{{ $feature['color'] }} text-white p-6 rounded-xl shadow hover:scale-105 transform transition duration-300 cursor-pointer">
+                        <a href="{{ $feature['route'] }}"
+                           class="{{ $feature['color'] }} text-white p-6 rounded-xl shadow hover:scale-105 transform transition duration-300 cursor-pointer block">
                             <div class="flex items-center gap-4">
                                 <div class="text-3xl">{{ $feature['icon'] }}</div>
                                 <div>
@@ -30,7 +66,7 @@
                                     <p class="text-sm">{{ $feature['desc'] }}</p>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             </div>
