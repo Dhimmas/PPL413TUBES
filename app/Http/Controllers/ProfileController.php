@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Profile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,25 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    public function store(Request $request)
+    {
+        $request->validate([
+            'gender' => 'required',
+            'tanggal_lahir' => 'required|date',
+            'phone' => 'required|string',
+            'bio' => 'nullable|string',
+            'profile_picture' => 'nullable|image|max:2048',
+        ]);
+
+        $data = $request->all();
+        $data['user_id'] = auth()->id(); // penting
+
+        // Simpan profile baru
+        Profile::create($data);
+
+        return back()->with('status', 'profile-detail-updated');
+    }
+
     /**
      * Display the user's profile form.
      */
