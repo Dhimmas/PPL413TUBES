@@ -1,39 +1,100 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-white">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+    @php
+        $hour = now()->format('H');
+        if ($hour < 12) $greeting = 'Good Morning';
+        elseif ($hour < 18) $greeting = 'Good Afternoon';
+        else $greeting = 'Good Evening';
+    @endphp
 
-    <div class="py-12 bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 min-h-screen">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="backdrop-blur-lg bg-white/10 border border-white/10 shadow-xl sm:rounded-lg p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    @php
-                        $features = [
-                            ['title' => 'Profil Pribadi', 'desc' => 'Lihat dan ubah informasi diri kamu.', 'icon' => '👤', 'color' => 'from-blue-500 to-blue-600'],
-                            ['title' => 'Forum Diskusi', 'desc' => 'Diskusi bersama teman dan dosen.', 'icon' => '💬', 'color' => 'from-green-500 to-green-600'],
-                            ['title' => 'Dashboard', 'desc' => 'Beranda utama aplikasi Studify.', 'icon' => '📊', 'color' => 'from-purple-500 to-purple-600'],
-                            ['title' => 'To-Do List', 'desc' => 'Kelola daftar tugas harianmu.', 'icon' => '📝', 'color' => 'from-yellow-500 to-yellow-600'],
-                            ['title' => 'Progress Tracker', 'desc' => 'Pantau perkembangan belajarmu.', 'icon' => '📈', 'color' => 'from-red-500 to-red-600'],
-                            ['title' => 'Study Goal', 'desc' => 'Tetapkan dan capai tujuan belajar.', 'icon' => '🎯', 'color' => 'from-pink-500 to-pink-600'],
-                        ];
-                    @endphp
+    <div x-data="{ open: false }" class="flex min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 text-white">
 
-                    @foreach ($features as $feature)
-                        <div
-                            class="rounded-2xl bg-gradient-to-br {{ $feature['color'] }} text-white p-6 shadow-lg transition duration-300 transform hover:scale-[1.03] hover:shadow-xl hover:shadow-white/20 cursor-pointer group">
-                            <div class="flex items-start gap-4">
-                                <div class="text-4xl group-hover:rotate-6 transition-transform duration-300">{{ $feature['icon'] }}</div>
-                                <div>
-                                    <h3 class="text-xl font-bold mb-1">{{ $feature['title'] }}</h3>
-                                    <p class="text-sm opacity-90">{{ $feature['desc'] }}</p>
-                                </div>
-                            </div>
+        <!-- Sidebar -->
+        <div :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
+             class="fixed md:static inset-y-0 left-0 w-64 bg-white/10 backdrop-blur-md p-4 transform md:translate-x-0 transition-transform duration-300 z-40">
+
+            <div class="flex justify-between items-center mb-6 md:hidden">
+                <span class="text-lg font-semibold">Menu</span>
+                <button @click="open = false">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <nav class="space-y-4">
+                <a href="#" class="flex items-center gap-2 hover:text-indigo-400"><span>🏠</span><span>Home</span></a>
+                <a href="#" class="flex items-center gap-2 hover:text-indigo-400"><span>📝</span><span>To-Do List</span></a>
+                <a href="#" class="flex items-center gap-2 hover:text-indigo-400"><span>🎯</span><span>Study Goals</span></a>
+                <a href="#" class="flex items-center gap-2 hover:text-indigo-400"><span>📈</span><span>Progress</span></a>
+                <a href="#" class="flex items-center gap-2 hover:text-indigo-400"><span>👤</span><span>Profile</span></a>
+            </nav>
+        </div>
+
+        <!-- Sidebar toggle button for mobile -->
+        <button @click="open = !open"
+                class="fixed top-4 left-4 z-50 md:hidden bg-white/10 backdrop-blur p-2 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="h-6 w-6 text-white"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path :class="{ 'rotate-180': open }"
+                      class="transition-transform duration-300"
+                      stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 5l7 7-7 7"/>
+            </svg>
+        </button>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 ml-0 md:ml-64 transition-all duration-300">
+            <div class="text-white">
+                <h2 class="text-2xl font-bold mb-1">{{ $greeting }}, {{ auth()->user()->name }}</h2>
+                <p class="mb-6 text-white/80">We wish you have a good day!</p>
+
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <!-- To-Do Card -->
+                    <div class="bg-indigo-300 rounded-xl p-4 text-black shadow-lg">
+                        <h3 class="font-semibold text-lg mb-1">To - Do List</h3>
+                        <p class="text-sm mb-2">A to-do list is a list of tasks to help organize your activities.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs">3-10 MIN</span>
+                            <button class="px-4 py-1 bg-white text-indigo-600 rounded-full text-sm font-semibold">START</button>
                         </div>
-                    @endforeach
+                    </div>
+
+                    <!-- Study Goals Card -->
+                    <div class="bg-amber-300 rounded-xl p-4 text-black shadow-lg">
+                        <h3 class="font-semibold text-lg mb-1">Study Goals</h3>
+                        <p class="text-sm mb-2">Study goals are learning targets set to improve understanding.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs">3-10 MIN</span>
+                            <button class="px-4 py-1 bg-white text-amber-600 rounded-full text-sm font-semibold">START</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Tracker -->
+                <div class="mt-6 bg-gray-800 rounded-xl p-4 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold">Progress Tracker</h3>
+                        <p class="text-xs text-white/70">SEE WHAT YOU'VE ACCOMPLISHED!</p>
+                    </div>
+                    <button class="bg-white text-black p-2 rounded-full">
+                        ▶️
+                    </button>
+                </div>
+
+                <!-- Progress List -->
+                <h3 class="mt-8 text-lg font-semibold">Your progress</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                    <div class="bg-white/10 backdrop-blur rounded-xl p-4">
+                        <p class="font-semibold">Learning HTML</p>
+                        <p class="text-xs text-white/70">75% Complete</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur rounded-xl p-4">
+                        <p class="font-semibold">PPL Homework</p>
+                        <p class="text-xs text-white/70">Deadline • 2 HOURS LEFT</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 </x-app-layout>
