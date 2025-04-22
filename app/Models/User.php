@@ -6,7 +6,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+<<<<<<< HEAD
 use App\Models\UserProfile;
+=======
+>>>>>>> 33a5f72 (test-regist)
 
 class User extends Authenticatable
 {
@@ -46,9 +49,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+<<<<<<< HEAD
 
     public function profile()
     {
         return $this->hasOne(Profile::class);
     }
+=======
+>>>>>>> 33a5f72 (test-regist)
 }

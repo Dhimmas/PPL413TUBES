@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "d6c73ea5dadcd971050eeb806511e47d",
+=======
+    "content-hash": "88970a0117c062eed55fa8728fc43833",
+>>>>>>> 33a5f72 (test-regist)
     "packages": [
         {
             "name": "brick/math",
@@ -1056,6 +1060,7 @@
         },
         {
             "name": "laravel/framework",
+<<<<<<< HEAD
             "version": "v12.7.2",
             "source": {
                 "type": "git",
@@ -1066,6 +1071,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/framework/zipball/a4ba76e06fe6dd02312359f8184ab259900a7780",
                 "reference": "a4ba76e06fe6dd02312359f8184ab259900a7780",
+=======
+            "version": "v12.9.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/framework.git",
+                "reference": "3db59aa0f382c349c78a92f3e5b5522e00e3301b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/3db59aa0f382c349c78a92f3e5b5522e00e3301b",
+                "reference": "3db59aa0f382c349c78a92f3e5b5522e00e3301b",
+>>>>>>> 33a5f72 (test-regist)
                 "shasum": ""
             },
             "require": {
@@ -1174,7 +1191,11 @@
                 "league/flysystem-sftp-v3": "^3.25.1",
                 "mockery/mockery": "^1.6.10",
                 "orchestra/testbench-core": "^10.0.0",
+<<<<<<< HEAD
                 "pda/pheanstalk": "^5.0.6",
+=======
+                "pda/pheanstalk": "^5.0.6|^7.0.0",
+>>>>>>> 33a5f72 (test-regist)
                 "php-http/discovery": "^1.15",
                 "phpstan/phpstan": "^2.0",
                 "phpunit/phpunit": "^10.5.35|^11.5.3|^12.0.1",
@@ -1267,7 +1288,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
+<<<<<<< HEAD
             "time": "2025-04-03T18:00:49+00:00"
+=======
+            "time": "2025-04-16T15:44:19+00:00"
+>>>>>>> 33a5f72 (test-regist)
         },
         {
             "name": "laravel/prompts",
@@ -1457,6 +1482,7 @@
         },
         {
             "name": "league/commonmark",
+<<<<<<< HEAD
             "version": "2.6.1",
             "source": {
                 "type": "git",
@@ -1467,6 +1493,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/d990688c91cedfb69753ffc2512727ec646df2ad",
                 "reference": "d990688c91cedfb69753ffc2512727ec646df2ad",
+=======
+            "version": "2.6.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/commonmark.git",
+                "reference": "06c3b0bf2540338094575612f4a1778d0d2d5e94"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/06c3b0bf2540338094575612f4a1778d0d2d5e94",
+                "reference": "06c3b0bf2540338094575612f4a1778d0d2d5e94",
+>>>>>>> 33a5f72 (test-regist)
                 "shasum": ""
             },
             "require": {
@@ -1560,7 +1598,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2024-12-29T14:10:59+00:00"
+=======
+            "time": "2025-04-18T21:09:27+00:00"
+>>>>>>> 33a5f72 (test-regist)
         },
         {
             "name": "league/config",
@@ -5973,6 +6015,7 @@
             "time": "2020-07-09T08:09:16+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "laravel/breeze",
             "version": "v2.3.6",
             "source": {
@@ -6034,6 +6077,8 @@
             "time": "2025-03-06T14:02:32+00:00"
         },
         {
+=======
+>>>>>>> 33a5f72 (test-regist)
             "name": "laravel/pail",
             "version": "v1.2.2",
             "source": {
@@ -6113,6 +6158,7 @@
         },
         {
             "name": "laravel/pint",
+<<<<<<< HEAD
             "version": "v1.21.2",
             "source": {
                 "type": "git",
@@ -6123,6 +6169,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/pint/zipball/370772e7d9e9da087678a0edf2b11b6960e40558",
                 "reference": "370772e7d9e9da087678a0edf2b11b6960e40558",
+=======
+            "version": "v1.22.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/pint.git",
+                "reference": "7ddfaa6523a675fae5c4123ee38fc6bfb8ee4f36"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/7ddfaa6523a675fae5c4123ee38fc6bfb8ee4f36",
+                "reference": "7ddfaa6523a675fae5c4123ee38fc6bfb8ee4f36",
+>>>>>>> 33a5f72 (test-regist)
                 "shasum": ""
             },
             "require": {
@@ -6133,9 +6191,15 @@
                 "php": "^8.2.0"
             },
             "require-dev": {
+<<<<<<< HEAD
                 "friendsofphp/php-cs-fixer": "^3.72.0",
                 "illuminate/view": "^11.44.2",
                 "larastan/larastan": "^3.2.0",
+=======
+                "friendsofphp/php-cs-fixer": "^3.75.0",
+                "illuminate/view": "^11.44.2",
+                "larastan/larastan": "^3.3.1",
+>>>>>>> 33a5f72 (test-regist)
                 "laravel-zero/framework": "^11.36.1",
                 "mockery/mockery": "^1.6.12",
                 "nunomaduro/termwind": "^2.3",
@@ -6175,7 +6239,11 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
+<<<<<<< HEAD
             "time": "2025-03-14T22:31:42+00:00"
+=======
+            "time": "2025-04-08T22:11:45+00:00"
+>>>>>>> 33a5f72 (test-regist)
         },
         {
             "name": "laravel/sail",
@@ -8127,12 +8195,20 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
+<<<<<<< HEAD
     "stability-flags": [],
+=======
+    "stability-flags": {},
+>>>>>>> 33a5f72 (test-regist)
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
+<<<<<<< HEAD
     "platform-dev": [],
+=======
+    "platform-dev": {},
+>>>>>>> 33a5f72 (test-regist)
     "plugin-api-version": "2.6.0"
 }

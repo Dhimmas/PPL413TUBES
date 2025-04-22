@@ -1,3 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col justify-between">
+
+    <div class="flex-grow flex items-center justify-center px-4 pt-10 pb-24">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-2xl font-semibold text-gray-800">🎉 Welcome</h1>
+            </div>
+
+            <p class="text-gray-600 mb-6 text-sm">
+                Hai, {{ Auth::user()->name }} 👋<br>
+                Kamu berhasil login! Ini adalah halaman dashboard aplikasi kamu.
+            </p>
+
+            <button onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                class="w-full py-3 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 transition">
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Bottom Navigation -->
+    <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-sm px-4">
+        <div class="bg-white shadow-lg rounded-full flex justify-between px-6 py-3">
+            <!-- Home -->
+            <a href="#" class="flex flex-col items-center text-purple-500 hover:text-purple-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M4 10v10a1 1 0 001 1h3m10-11v10a1 1 0 001 1h3m-14 0h4m4 0h4" />
+                </svg>
+                <span class="text-xs">Home</span>
+            </a>
+
+            <!-- Profile -->
+            <a href="#" class="flex flex-col items-center text-gray-500 hover:text-purple-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.21 0 4.29.534 6.121 1.475M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span class="text-xs">Profile</span>
+            </a>
+
+            <!-- Logout -->
+            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+               class="flex flex-col items-center text-gray-500 hover:text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 11-4 0v-1m4-4V7a2 2 0 10-4 0v1" />
+                </svg>
+                <span class="text-xs">Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Hidden logout form -->
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+        @csrf
+    </form>
+
+</body>
+</html>
+
+
+
 <x-app-layout>
     @php
         $hour = now()->format('H');

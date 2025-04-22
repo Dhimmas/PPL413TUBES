@@ -85,6 +85,10 @@ return [
                 'smtp',
                 'log',
             ],
+<<<<<<< HEAD
+=======
+            'retry_after' => 60,
+>>>>>>> 33a5f72 (test-regist)
         ],
 
         'roundrobin' => [
@@ -93,6 +97,10 @@ return [
                 'ses',
                 'postmark',
             ],
+<<<<<<< HEAD
+=======
+            'retry_after' => 60,
+>>>>>>> 33a5f72 (test-regist)
         ],
 
     ],
