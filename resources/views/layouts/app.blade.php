@@ -54,9 +54,8 @@
         </header>
     @endisset
 
-    {{-- Page Content --}}
     <main class="container mx-auto py-12 px-4">
-        {{ $slot }}
+        @yield('content')
     </main>
 
     {{-- Footer --}}

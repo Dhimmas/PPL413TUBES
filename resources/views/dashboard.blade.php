@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.app_2')
+
+@section('content')
     @php
         $hour = now()->format('H');
         if ($hour < 12) $greeting = 'Good Morning';
@@ -97,4 +99,4 @@
             </div>
         </main>
     </div>
-</x-app-layout>
+@endsection

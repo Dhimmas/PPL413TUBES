@@ -29,8 +29,16 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                @yield('content')
             </main>
+
+            {{-- Footer --}}
+            <footer class="bg-gray-800 text-white py-6">
+                <div class="container mx-auto text-center">
+                    <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+                </div>
+            </footer>
+
         </div>
     </body>
 </html>
