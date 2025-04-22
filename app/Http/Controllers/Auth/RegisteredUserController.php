@@ -15,8 +15,11 @@ use Illuminate\View\View;
 =======
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Auth;
 >>>>>>> 33a5f72 (test-regist)
+=======
+>>>>>>> 2b19e7a (implementasi fitur registrasi studify)
 
 class RegisteredUserController extends Controller
 {
@@ -61,13 +64,18 @@ class RegisteredUserController extends Controller
         ]);
 
         // Simpan user baru
+<<<<<<< HEAD
 >>>>>>> 33a5f72 (test-regist)
         $user = User::create([
+=======
+        User::create([
+>>>>>>> 2b19e7a (implementasi fitur registrasi studify)
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         event(new Registered($user));
 
@@ -81,5 +89,9 @@ class RegisteredUserController extends Controller
         // Redirect ke halaman dashboard
         return redirect()->route('dashboard');
 >>>>>>> 33a5f72 (test-regist)
+=======
+        // Redirect ke halaman login (tanpa login otomatis)
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
+>>>>>>> 2b19e7a (implementasi fitur registrasi studify)
     }
 }
