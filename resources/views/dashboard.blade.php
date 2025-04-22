@@ -22,11 +22,11 @@
             </div>
 
             <nav class="space-y-4">
-                <a href="#" class="flex items-center gap-2 hover:text-indigo-400"><span>🏠</span><span>Home</span></a>
-                <a href="#" class="flex items-center gap-2 hover:text-indigo-400"><span>📝</span><span>To-Do List</span></a>
-                <a href="#" class="flex items-center gap-2 hover:text-indigo-400"><span>🎯</span><span>Study Goals</span></a>
-                <a href="#" class="flex items-center gap-2 hover:text-indigo-400"><span>📈</span><span>Progress</span></a>
-                <a href="#" class="flex items-center gap-2 hover:text-indigo-400"><span>👤</span><span>Profile</span></a>
+                <a href="" class="flex items-center gap-2 hover:text-indigo-400"><span>🏠</span><span>Home</span></a>
+                <a href="To-Do List" class="flex items-center gap-2 hover:text-indigo-400"><span>📝</span><span>To-Do List</span></a>
+                <a href="Study Goals" class="flex items-center gap-2 hover:text-indigo-400"><span>🎯</span><span>Study Goals</span></a>
+                <a href="progress" class="flex items-center gap-2 hover:text-indigo-400"><span>📈</span><span>Progress</span></a>
+                <a href="profile" class="flex items-center gap-2 hover:text-indigo-400"><span>👤</span><span>Profile</span></a>
             </nav>
         </div>
 
