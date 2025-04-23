@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -91,5 +90,4 @@
 </body>
 </html>
     </form>
-#         @csrf
->>>>>>> 33a5f72 (test-regist)
+
