@@ -1,7 +1,7 @@
 <section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Detail Profil</h2>
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        <h2 class="text-lg font-medium text-gray-900">Detail Profil</h2>
+        <p class="mt-1 text-sm text-gray-600">
             Lengkapi informasi tambahan akunmu.
         </p>
     </header>
@@ -50,7 +50,7 @@
         <div class="flex items-center gap-4">
             <x-primary-button>save</x-primary-button>
             @if (session('status') === 'profile-detail-updated')
-                <p class="text-sm text-gray-600 dark:text-gray-400">Tersimpan!</p>
+                <p class="text-sm text-gray-600">Tersimpan!</p>
             @endif
         </div>
     </form>
