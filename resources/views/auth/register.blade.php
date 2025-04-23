@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf
@@ -166,4 +165,3 @@
     </div>
   </div>
 @endsection
->>>>>>> 33a5f72 (test-regist)
