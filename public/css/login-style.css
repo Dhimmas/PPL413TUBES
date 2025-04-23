@@ -1,21 +1,19 @@
-/* General Body Styling */
 body {
-    background-color: #ee1313; /* Darker background for a modern look */
+    background-color: #ee1313; 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
 }
 
-/* Login Container */
+
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #ededed; /* Dark background to contrast with the form */
+    background-color: #ededed; 
 }
 
-/* Login Box Styling */
 .login-box {
     background-color: #ffffff;
     width: 100%;
@@ -23,63 +21,56 @@ body {
     padding: 40px;
     border-radius: 16px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-    color: #333; /* Dark text for better readability */
+    color: #333; 
 }
 
-/* Untuk menggeser Remember Me ke kiri dan atur ukurannya */
 .remember-me {
     display: flex;
-    justify-content: flex-start; /* Geser elemen ke kiri */
-    align-items: center; /* Vertikal terhadap elemen di dalamnya */
-    margin-top: -9px; /* Agar ada jarak antara elemen lainnya */
+    justify-content: flex-start; 
+    align-items: center; 
+    margin-top: -9px; 
 }
 
 .remember-label {
-    font-size: 14px; /* Menyesuaikan ukuran teks */
-    color: #000000; /* Warna teks lebih gelap */
+    font-size: 14px; 
+    color: #000000; 
 }
 
 .checkbox {
-    margin-right: 3px; /* Jarak antara checkbox dan teks */
-    transform: scale(1); /* Membesarkan ukuran checkbox jika perlu */
+    margin-right: 3px; 
+    transform: scale(1); 
 }
 
-/* Input Field Styling */
-/* Update selector untuk x-input-label */
 .x-input-label {
-    font-size: 14px !important;        /* Ukuran teks label */
-    color: #6366f1 !important;         /* Ganti dengan warna yang diinginkan */
-    font-weight: 600 !important;       /* Berat font untuk label */
-    margin-bottom: 8px !important;     /* Spasi antara label dan input */
+    font-size: 14px !important;        
+    color: #6366f1 !important;         
+    font-weight: 600 !important;      
+    margin-bottom: 8px !important;     
 }
 
 
 
 .input-field {
-    width: 100% !important;                /* Menyesuaikan lebar input agar penuh */
-    padding: 8px !important;                /* Menambah padding agar lebih besar */
-    border: 1px solid #d1d5db;    /* Border abu-abu */
-    border-radius: 8px;           /* Membulatkan sudut input */
-    font-size: 16px;              /* Ukuran teks lebih besar */
-    background-color: #ff1515;    /* Latar belakang input */
-    color: #585858 !important;            /* Warna teks di dalam input */
+    width: 100% !important;                
+    padding: 8px !important;                
+    border: 1px solid #d1d5db;   
+    border-radius: 8px;          
+    font-size: 16px;              
+    background-color: #ff1515;    
+    color: #585858 !important;         
 }
 
-
-/* Mengubah warna teks saat input difokuskan */
 .input-field:focus {
-    border-color: #bdbeff;         /* Border biru saat difokuskan */
-    background-color: #cad7fe;     /* Latar belakang biru terang saat difokuskan */
-    outline: none;                 /* Menghilangkan outline default */
+    border-color: #bdbeff;         
+    background-color: #cad7fe;    
+    outline: none;               
 }
 
-/* Error Message Styling */
 .error-message {
-    color: #f87171;                /* Warna merah untuk pesan error */
-    font-size: 14px;               /* Ukuran font error lebih kecil */
+    color: #f87171;              
+    font-size: 14px;             
 }
 
-/* Heading Styling */
 h2 {
     font-size: 28px;
     font-weight: 700;
@@ -88,7 +79,6 @@ h2 {
     margin-bottom: 30px;
 }
 
-/* Input Fields Styling */
 input[type="email"],
 input[type="password"] {
     width: 100%;
@@ -97,36 +87,34 @@ input[type="password"] {
     border-radius: 12px;
     margin-bottom: 20px;
     font-size: 16px;
-    background-color: #f1f5f9; /* Lighter input background */
-    color: #4b5563; /* Darker text color */
+    background-color: #f1f5f9; 
+    color: #4b5563; 
 }
 
 input[type="email"]:focus,
 input[type="password"]:focus {
     outline: none;
-    border-color: #6366f1; /* Blue border when focused */
+    border-color: #6366f1; 
     box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
 }
 
-/* Button Styling */
 button {
     width: 100%;
     padding: 19px;
-    background-color: #6366f1; /* Modern blue color */
+    background-color: #6366f1; 
     color: white;
     border: none;
     border-radius: 12px;
-    font-size: 18px;  /* Ukuran font lebih besar untuk tombol */
-    font-weight: 600;  /* Menebalkan font */
+    font-size: 18px;  
+    font-weight: 600;  
     cursor: pointer;
-    text-transform: uppercase;  /* Membuat teks tombol menjadi huruf kapital */
+    text-transform: uppercase;  
 }
 
 button:hover {
-    background-color: #4f54e6; /* Darker blue for hover effect */
+    background-color: #4f54e6; 
 }
 
-/* Tombol Login Khusus */
 button.login-button {
     width: 78%;
     padding: 14px;
@@ -138,12 +126,12 @@ button.login-button {
     font-weight: 400 !important;
     cursor: pointer;
     text-transform: uppercase;
-    display: flex;            /* Menggunakan Flexbox */
-    justify-content: center;  /* Memusatkan konten secara horizontal */
-    align-items: center;      /* Memusatkan konten secara vertikal */
-    text-align: center;       /* Memastikan teks berada di tengah */
-    margin-left: auto;  /* Menambahkan margin kiri otomatis untuk menggeser tombol ke kanan */
-    margin-right: auto; /* Menambahkan margin kanan otomatis untuk menjaga keseimbangan */
+    display: flex;            
+    justify-content: center;  
+    align-items: center;      
+    text-align: center;       
+    margin-left: auto;  
+    margin-right: auto; 
     margin-top: 20px;
 }
 
@@ -152,9 +140,6 @@ button.login-button:hover {
     background-color: #4f54e6;
 }
 
-
-
-/* Forgot Password Link Styling */
 .forgot-password {
     display: block;
     text-align: right;
@@ -168,7 +153,6 @@ button.login-button:hover {
     text-decoration: underline;
 }
 
-/* Sign Up Link Styling */
 .signup-link {
     display: block;
     text-align: center;
@@ -181,7 +165,6 @@ button.login-button:hover {
     text-decoration: underline;
 }
 
-/* Responsive Design */
 @media (max-width: 640px) {
     .login-box {
         width: 85%;
