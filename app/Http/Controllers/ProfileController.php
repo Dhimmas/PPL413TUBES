@@ -60,8 +60,14 @@ class ProfileController extends Controller
 
         // Handle upload profile picture (jika ada)
         if ($request->hasFile('profile_picture')) {
-            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $dataProfile['profile_picture'] = $path;
+            $file = $request->file('profile_picture');
+        
+            if ($file->isValid()) {
+                $path = $file->store('profile_pictures', 'public');
+                $dataProfile['profile_picture'] = $path;
+            } else {
+                return back()->withErrors(['profile_picture' => 'File upload gagal, file tidak valid.']);
+            }
         }
 
         // Update atau create

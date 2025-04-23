@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -43,6 +45,42 @@ class ProfileTest extends TestCase
         $this->assertNull($user->email_verified_at);
     }
 
+    public function test_detail_profile_information_can_be_updated(): void
+    {
+        Storage::fake('public');
+
+        $user = User::factory()->create();
+
+        $file = UploadedFile::fake()->image('profile.jpg');
+
+        $response = $this
+        ->actingAs($user)
+        ->patch('/profile', [
+            'name' => 'Test User',
+            'email' => 'testuser@example.com',
+            'gender' => 'Laki-laki',
+            'tanggal_lahir' => '2002-01-01',
+            'phone' => '082152257872',
+            'bio' => 'Mahasiswa jurusan Sistem Informasi',
+            'profile_picture' => $file,
+        ]);
+
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        // Cek bahwa file disimpan di storage/public (pastikan di controller kamu pakai disk 'public')
+        Storage::disk('public')->assertExists('profile_pictures/' . $file->hashName());
+
+        // Cek data user
+        $user->refresh();
+        $this->assertSame('Laki-laki', $user->profile->gender);
+        $this->assertSame('2002-01-01', $user->profile->tanggal_lahir);
+        $this->assertSame('082152257872', $user->profile->phone);
+        $this->assertSame('Mahasiswa jurusan Sistem Informasi', $user->profile->bio);
+    }
+ 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void
     {
         $user = User::factory()->create();
