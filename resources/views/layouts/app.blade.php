@@ -14,9 +14,9 @@
     <!-- CSS / Tailwind -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-gray-50">
+<body class="min-h-screen font-sans antialiased bg-gray-50">
 
-    {{-- Navbar --}}
+    <!-- {{-- Navbar --}}
     <nav class="bg-gradient-to-r from-indigo-600 to-blue-500 shadow-lg p-4">
         <div class="container mx-auto flex justify-between items-center">
             <a href="{{ route('dashboard') }}" class="text-white text-2xl font-bold hover:text-indigo-100 transition duration-300">
@@ -35,7 +35,11 @@
                 @endauth
             </div>
         </div>
+<<<<<<< HEAD
     </nav>
+=======
+    </nav> -->
+>>>>>>> CRUD-fitur-profile
 
     {{-- Hero Section (HANYA di halaman '/' atau home) --}}
     @if (Route::currentRouteName() === 'home')
@@ -54,8 +58,13 @@
         </header>
     @endisset
 
+<<<<<<< HEAD
     <main class="container mx-auto py-12 px-4">
         @yield('content')
+=======
+    <main>
+        {{ $slot }}
+>>>>>>> CRUD-fitur-profile
     </main>
 
     {{-- Footer --}}
