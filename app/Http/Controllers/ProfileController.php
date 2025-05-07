@@ -25,6 +25,18 @@ class ProfileController extends Controller
         $data = $request->all();
         $data['user_id'] = auth()->id(); // penting
 
+        // Handle upload profile picture (jika ada)
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+        
+            if ($file->isValid()) {
+                $path = $file->store('profile_pictures', 'public'); // Simpan gambar di folder 'public/profile_pictures'
+                $data['profile_picture'] = $path; // Simpan path gambar
+            } else {
+                return back()->withErrors(['profile_picture' => 'File upload gagal, file tidak valid.']);
+            }
+        }
+
         // Simpan profile baru
         Profile::create($data);
 
@@ -63,19 +75,19 @@ class ProfileController extends Controller
             $file = $request->file('profile_picture');
         
             if ($file->isValid()) {
-                $path = $file->store('profile_pictures', 'public');
-                $dataProfile['profile_picture'] = $path;
+                // Simpan gambar profil baru
+                $path = $file->store('profile_pictures', 'public'); // Menyimpan di folder 'public/profile_pictures'
+                $dataProfile['profile_picture'] = $path; // Menyimpan path gambar
             } else {
                 return back()->withErrors(['profile_picture' => 'File upload gagal, file tidak valid.']);
             }
         }
 
-        // Update atau create
+        // Update atau create data profil pengguna
         $user->profile()->updateOrCreate(['user_id' => $user->id], $dataProfile);
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
-
 
     /**
      * Delete the user's account.
