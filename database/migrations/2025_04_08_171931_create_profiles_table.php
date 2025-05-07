@@ -16,8 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('profile_picture')->nullable();
             $table->unsignedBigInteger('user_id');
-            $table->date('tanggal_lahir');
-            $table->string('gender');
+            $table->date('tanggal_lahir')->nullable()->change();
+            $table->string('gender')->nullable();
             $table->string('phone')->nullable();
             $table->text('bio')->nullable();
             $table->timestamps();

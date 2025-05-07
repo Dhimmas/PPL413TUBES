@@ -36,10 +36,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/forum/{id}', [ForumController::class, 'destroy'])->name('forum.destroy');
 
     // Profile
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
-    Route::post('/profile', [ProfileController::class, 'store'])->name('profile.add');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::middleware('auth')->group(function () {
+        Route::post('/profile', [ProfileController::class, 'store'])->name('profile.add');
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
 
     // Chatbot Route
     Route::get('/chatbot', function () {
