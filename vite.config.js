@@ -8,4 +8,11 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+//     server: {
+//         host: '0.0.0.0', 
+//         port: 5173,        // (default, atau bisa ubah kalau mau bebwas)
+//         hmr: {
+//             host: '172.20.10.3', // <<< Tambahkan ini juga sesuai sama ip address klen ye
+//         },
+//     },
 });
