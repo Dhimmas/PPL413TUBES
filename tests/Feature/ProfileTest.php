@@ -19,8 +19,8 @@ class ProfileTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->get('/profile');
-
-        $response->assertOk();
+        // $response->assertOk();
+        $response->assertStatus(200);
     }
 
     public function test_profile_information_can_be_updated(): void
@@ -37,7 +37,6 @@ class ProfileTest extends TestCase
         $response
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
-
         $user->refresh();
 
         $this->assertSame('Test User', $user->name);

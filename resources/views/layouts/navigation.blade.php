@@ -1,3 +1,4 @@
+{{--
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,3 +99,25 @@
         </div>
     </div>
 </nav>
+--}}
+
+{{-- Navbar --}}
+    <nav class="bg-gradient-to-r from-indigo-600 to-blue-500 shadow-lg p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{{ route('dashboard') }}" class="text-white text-2xl font-bold hover:text-indigo-100 transition duration-300">
+                {{ config('app.name') }}
+            </a>
+
+            <div class="space-x-4">
+                @auth
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="text-white px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 transition duration-300">Logout</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="text-white hover:text-indigo-100 transition duration-300">Login</a>
+                    <a href="{{ route('register') }}" class="text-white hover:text-indigo-100 transition duration-300">Register</a>
+                @endauth
+            </div>
+        </div>
+    </nav>
