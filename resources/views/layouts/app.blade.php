@@ -35,11 +35,7 @@
                 @endauth
             </div>
         </div>
-<<<<<<< HEAD
-    </nav>
-=======
     </nav> -->
->>>>>>> CRUD-fitur-profile
 
     {{-- Hero Section (HANYA di halaman '/' atau home) --}}
     @if (Route::currentRouteName() === 'home')
@@ -58,13 +54,8 @@
         </header>
     @endisset
 
-<<<<<<< HEAD
-    <main class="container mx-auto py-12 px-4">
-        @yield('content')
-=======
     <main>
         {{ $slot }}
->>>>>>> CRUD-fitur-profile
     </main>
 
     {{-- Footer --}}

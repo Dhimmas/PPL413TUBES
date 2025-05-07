@@ -1,6 +1,4 @@
-@extends('layouts.app_2')
-
-@section('content')
+<x-app-layout>
     @php
         $hour = now()->format('H');
         if ($hour < 12) {
