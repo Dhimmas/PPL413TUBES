@@ -36,7 +36,6 @@ class ProfileController extends Controller
                 return back()->withErrors(['profile_picture' => 'File upload gagal, file tidak valid.']);
             }
         }
-
         // Simpan profile baru
         Profile::create($data);
 
@@ -75,12 +74,14 @@ class ProfileController extends Controller
             $file = $request->file('profile_picture');
         
             if ($file->isValid()) {
-                // Simpan gambar profil baru
-                $path = $file->store('profile_pictures', 'public'); // Menyimpan di folder 'public/profile_pictures'
-                $dataProfile['profile_picture'] = $path; // Menyimpan path gambar
+                $path = $file->store('profile_pictures', 'public');
+                $dataProfile['profile_picture'] = $path;
             } else {
                 return back()->withErrors(['profile_picture' => 'File upload gagal, file tidak valid.']);
             }
+        } else {
+            // Jangan menimpa field profile_picture jika tidak ada file baru
+            unset($dataProfile['profile_picture']);
         }
 
         // Update atau create data profil pengguna

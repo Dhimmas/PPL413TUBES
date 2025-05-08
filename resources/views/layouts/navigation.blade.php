@@ -115,7 +115,7 @@
                     ['📝', 'To-Do', 'to_do'],
                     ['🎯', 'Goals', 'goals'],
                     ['📈', 'Progress', 'progress'],
-                    ['👤', 'Profile', 'profile'],
+                    ['👤', 'Profile', 'profile.edit'],
                     ['🤖', 'Chatbot', 'chatbot'],
                     ['🎓', 'LMS', 'lms'],
                     ['💬', 'Forum Diskusi', 'forum.index'], // Correct route name
@@ -159,7 +159,7 @@
                     ['📝', 'To-Do', 'to_do'],
                     ['🎯', 'Goals', 'goals'],
                     ['📈', 'Progress', 'progress'],
-                    ['👤', 'Profile', 'profile'],
+                    ['👤', 'Profile', 'profile.edit'],
                     ['🤖', 'Chatbot', 'chatbot'],
                     ['🎓', 'LMS', 'lms'],
                     ['💬', 'Forum Diskusi', 'forum.index'], // Correct route name
