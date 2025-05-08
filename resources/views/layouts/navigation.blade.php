@@ -118,7 +118,7 @@
                     ['👤', 'Profile', 'profile.edit'],
                     ['🤖', 'Chatbot', 'chatbot'],
                     ['🎓', 'LMS', 'lms'],
-                    ['💬', 'Forum Diskusi', 'forum.index'], // Correct route name
+                    ['💬', 'Forum Diskusi', 'forum.index'],
                 ] as [$icon, $label, $routeName])
                     <a href="{{ route($routeName) }}" class="flex items-center space-x-3 text-sm font-medium p-3 rounded-xl bg-white/10 hover:bg-white/20 transition hover:scale-105">
                         <span class="text-xl">{{ $icon }}</span>
