@@ -11,6 +11,12 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
+// Redirect root ke welcome
+Route::get('/', function () {
+    return view('welcome');
+});
+
+
 // Semua route ini hanya bisa diakses setelah login & email terverifikasi
 Route::middleware(['auth', 'verified'])->group(function () {
 
