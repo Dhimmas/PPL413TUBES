@@ -2,8 +2,10 @@
     @include('layouts.navigation')
     <div class="profile-container max-w-4xl mx-auto p-6 bg-white/10 backdrop-blur-md shadow-lg rounded-xl border border-white/20 mt-8 text-white">
         <!-- Profile Header -->
+         {{$user}}
+         {{$profile}}
         <div class="text-center">
-        <img src="{{ asset('' . $profile->profile_picture) }}" alt="Foto Profil" class="w-40 h-40 rounded-full mx-auto object-cover shadow-md" />
+        <img src="{{ asset('public' . $profile->profile_picture) }}" alt="Foto Profil" class="w-40 h-40 rounded-full mx-auto object-cover shadow-md" />
             <h1 class="text-3xl font-semibold mt-4">{{ $user->user_id }}</h1>
             <p class="text-sm text-gray-300 mt-2">
                 {{ \Carbon\Carbon::parse($user->tanggal_lahir)->format('F Y') }} | 
@@ -34,6 +36,19 @@
         <div class="mt-8 bg-white/5 rounded-lg p-6 border border-red-500/30">
             <h3 class="text-xl font-semibold text-red-400 mb-4">Delete Account</h3>
             @include('profile.partials.delete-user-form')
+        </div>
+
+        <div>
+        <!-- Authentication -->
+            <form method="POST" action="{{ route('logout') }}"> <!-- buat sementara doang gessssssss biar bisa logout -->
+                @csrf
+
+                <button :href="route('logout')"
+                        onclick="event.preventDefault();
+                                    this.closest('form').submit();">
+                    {{ __('Log Out') }}
+                </button>
+            </form>
         </div>
     </div>
 

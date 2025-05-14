@@ -3,7 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\ChatController;
-use App\Http\Controllers\LmsController;
+use App\Http\Controllers\Admin\QuizController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root ke dashboard
@@ -54,11 +54,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('chatbot.index'); // Pastikan view ini ada
     })->name('chatbot');
 
-    // LMS Route
-    Route::get('/lms', function () {
-        return view('lms.index'); // Pastikan view ini ada
-    })->name('lms');
+    // Quiz Route
+    Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
+    Route::get('/quiz/{id}', [QuizController::class, 'show'])->name('quiz.show');
+    Route::post('/quiz/result', [QuizController::class, 'result'])->name('quiz.result');
     
+});
+
+//Route Admin
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    Route::resource('quiz', QuizController::class);
 });
 
 // Autentikasi
