@@ -2,7 +2,7 @@
 <div class="max-w-2xl mx-auto bg-gray-800 p-6 rounded text-white">
     <h1 class="text-2xl font-bold mb-4">Buat Quiz</h1>
 
-    <form method="POST" action="{{ route('admin.quiz.store') }}">
+    <form method="POST" action="{{ route('admin.quiz.store') }}" enctype="multipart/form-data">
         @csrf
 
         <div class="mb-4">
@@ -16,8 +16,8 @@
         </div>
 
         <div class="mb-4">
-            <label class="block mb-1">Gambar (URL)</label>
-            <input type="url" name="image" class="w-full p-2 rounded text-black">
+            <label class="block mb-1">Gambar Quiz</label>
+            <input type="file" name="image" class="w-full p-2 rounded text-black">
         </div>
 
         <div class="mb-4">

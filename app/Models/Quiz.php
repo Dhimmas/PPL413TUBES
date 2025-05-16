@@ -17,4 +17,13 @@ class Quiz extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
+    public function scopeWithQuestions($query)
+    {
+        return $query->has('questions');
+    }
 }

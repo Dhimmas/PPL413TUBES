@@ -14,7 +14,15 @@ class QuizController extends Controller
      */
     public function index()
     {
-        $quizzes = Quiz::with('category')->get();
+        $quizzes = Quiz::with('category')->get(); 
+        if (auth()->user()->is_admin) {
+        // Admin lihat semua quiz
+        $quizzes = Quiz::all();
+        } else {
+            // User hanya lihat quiz yang ada soal
+            $quizzes = Quiz::has('questions')->get();
+        }
+
         return view('quiz.index', compact('quizzes'));
     }
 
@@ -35,7 +43,7 @@ class QuizController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|url',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'nullable|exists:categories,id',
             'new_category' => 'nullable|string|max:255|unique:categories,name'
         ]);
@@ -51,9 +59,20 @@ class QuizController extends Controller
             return back()->withErrors(['category' => 'Pilih kategori atau buat baru'])->withInput();
         }
 
-        Quiz::create($validated);
+        // Handle upload gambar
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('quiz_images', 'public');
+        }
+
+        $quiz = Quiz::create([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'image' => $imagePath,
+            'category_id' => $validated['category_id'],
+        ]);
         
-        return redirect()->route('admin.quiz.index')->with('success', 'Quiz berhasil dibuat!');
+        return redirect()->route('admin.questions.create', $quiz->id)->with('success', 'Quiz berhasil dibuat. Sekarang tambahkan soal!');
     } 
 
     /**
@@ -82,7 +101,11 @@ class QuizController extends Controller
 
         return redirect()->route('quiz.index')->with('success', 'quiz berhasil diperbarui');
     }
-
+    public function show(Quiz $quiz)
+    {
+        $quiz->load('questions'); // Eager load questions
+        return view('quiz.show', compact('quiz'));
+    }
     /**
      * Remove the specified resource from storage.
      */

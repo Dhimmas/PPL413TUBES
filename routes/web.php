@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Admin\QuizController;
+use App\Http\Controllers\Admin\QuestionController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root ke dashboard
@@ -64,6 +65,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 //Route Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::resource('quiz', QuizController::class);
+    // Nested resource khusus untuk soal di dalam quiz
+    Route::get('quiz/{quiz}/questions/create', [QuestionController::class, 'create'])->name('questions.create');
+    Route::post('quiz/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
 });
 
 // Autentikasi
