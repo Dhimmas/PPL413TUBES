@@ -5,6 +5,7 @@ use App\Http\Controllers\ForumController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\UserQuizController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root ke dashboard
@@ -27,9 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     // Halaman statis
-    Route::view('/to-do', 'to-do')->name('to_do');
-    Route::view('/goals', 'goals')->name('goals');
-    Route::view('/progress', 'progress')->name('progress');
+    Route::view('/to-do', 'maintenance')->name('to_do');
+    Route::view('/goals', 'maintenance')->name('goals');
+    Route::view('/progress', 'maintenance')->name('progress');
 
     // Halaman index forum
     Route::get('/forum', [ForumController::class, 'index'])->name('forum.index');
@@ -52,12 +53,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Chatbot Route
     Route::get('/chatbot', function () {
-        return view('chatbot.index'); // Pastikan view ini ada
+        return view('maintenance'); // Pastikan view ini ada
     })->name('chatbot');
 
     // Quiz Route
     Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
-    Route::get('/quiz/{id}', [QuizController::class, 'show'])->name('quiz.show');
+    Route::get('/quiz/{quiz}/attempt', [UserQuizController::class, 'attempt'])->name('quiz.attempt');
+    Route::post('/quiz/{quiz}/attempt', [UserQuizController::class, 'submit'])->name('quiz.attempt.store');
     Route::post('/quiz/result', [QuizController::class, 'result'])->name('quiz.result');
     
 });
@@ -70,5 +72,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('quiz/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
 });
 
+    Route::fallback(function () {
+    return view('404page');
+    });
 // Autentikasi
 require __DIR__.'/auth.php';

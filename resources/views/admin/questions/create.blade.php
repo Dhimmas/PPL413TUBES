@@ -30,7 +30,7 @@
 
             const html = `
             <div class="bg-gray-800 p-6 rounded text-white mb-6" id="question-box-${index}">
-                <h2 class="text-xl font-semibold mb-4">Soal #${index + 1}</h2>
+                <h2 class="text-xl font-semibold mb-4">Soal ${index + 1}</h2>
 
                 {{-- Tipe Soal --}}
                 <div class="mb-4">

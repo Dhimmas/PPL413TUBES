@@ -101,10 +101,10 @@ class QuizController extends Controller
 
         return redirect()->route('quiz.index')->with('success', 'quiz berhasil diperbarui');
     }
-    public function show(Quiz $quiz)
+    public function show($id)
     {
-        $quiz->load('questions'); // Eager load questions
-        return view('quiz.show', compact('quiz'));
+        $quiz = Quiz::with('questions')->findOrFail($id);
+        return view('admin.quiz.show', compact('quiz'));
     }
     /**
      * Remove the specified resource from storage.

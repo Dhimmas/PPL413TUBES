@@ -23,42 +23,55 @@ class QuestionController extends Controller
         }
 
         foreach ($questions as $index => $questionData) {
-            // Validasi manual tiap soal
+            // Validasi umum
             $validated = \Validator::make($questionData, [
-                'question_text' => 'nullable|string',
-                'correct_option' => 'required|numeric',
+                'question_type' => 'required|in:multiple_choice,essay,file_based',
+                'question_text' => 'required|string',
+                'correct_option' => 'nullable|numeric',
                 'options' => 'nullable|array',
                 'options.*' => 'nullable|string',
+                'correct_answer' => 'nullable|string',
             ])->validate();
 
             $data = [
                 'quiz_id' => $quiz->id,
+                'question_type' => $questionData['question_type'],
                 'question_text' => $questionData['question_text'] ?? null,
             ];
 
-            // Tangani file & image
+            // Tangani file soal (jika ada)
             if ($request->hasFile("questions.$index.question_file")) {
                 $file = $request->file("questions.$index.question_file");
                 $data['question_file'] = $file->store('questions/files', 'public');
                 $data['file_type'] = $file->getClientOriginalExtension();
             }
 
+            // Tangani gambar soal (jika ada)
             if ($request->hasFile("questions.$index.image")) {
                 $image = $request->file("questions.$index.image");
                 $data['image'] = $image->store('questions/images', 'public');
             }
 
-            // Simpan options dan jawaban benar
-            $options = $questionData['options'] ?? [];
-            $correctIndex = $questionData['correct_option'];
+            // Tangani sesuai tipe soal
+            switch ($questionData['question_type']) {
+                case 'multiple_choice':
+                    $options = $questionData['options'] ?? [];
+                    $correctIndex = $questionData['correct_option'];
 
-            if (is_array($options) && isset($options[$correctIndex])) {
-                $data['options'] = json_encode($options);
-                $data['correct_answer'] = $options[$correctIndex];
-            } else {
-                return back()->withErrors([
-                    "questions.$index.correct_option" => "Jawaban benar tidak valid pada soal ke-" . ($index + 1)
-                ])->withInput();
+                    if (!is_array($options) || !isset($options[$correctIndex])) {
+                        return back()->withErrors([
+                            "questions.$index.correct_option" => "Jawaban benar tidak valid pada soal ke-" . ($index + 1)
+                        ])->withInput();
+                    }
+
+                    $data['options'] = $options;
+                    $data['correct_answer'] = $options[$correctIndex];
+                    break;
+
+                case 'essay':
+                case 'file_based':
+                    $data['correct_answer'] = $questionData['correct_answer'] ?? null;
+                    break;
             }
 
             // Simpan ke database
@@ -66,5 +79,11 @@ class QuestionController extends Controller
         }
 
         return redirect()->route('admin.quiz.index')->with('success', 'Semua soal berhasil ditambahkan!');
+    }
+    public function Destroy(string $id)
+    {
+        $questions = Question::findOrFail($id);
+        $questions -> delete();
+        return with('Questions berhasil dihapus'); //<- belum bener
     }
 }

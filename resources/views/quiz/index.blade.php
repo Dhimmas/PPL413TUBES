@@ -38,15 +38,16 @@
                         <span>Kategori: {{ $quiz->category?->name ?? '-' }}</span>
                         <span>{{ $quiz->questions_count }} Soal</span>
                     </div>
-
                     {{-- Action Buttons --}}
                     <div class="flex flex-col gap-2">
-                        <a href="{{ route('quiz.show', $quiz->id) }}" class="bg-green-500 hover:bg-green-600 text-white text-center py-2 rounded transition">
-                            Lihat Detail
+                        <a href="{{ route('quiz.attempt', $quiz->id) }}" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded transition">
+                            attempt
                         </a>
-                        
                         @auth
                             @if(auth()->user()->is_admin)
+                                <a href="{{ route('admin.quiz.show', $quiz->id) }}" class="bg-green-500 hover:bg-green-600 text-white text-center py-2 rounded transition">
+                                    Lihat Detail
+                                </a>
                                 <div class="flex gap-2">
                                     <a href="{{ route('admin.quiz.edit', $quiz->id) }}" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded transition">
                                         Edit

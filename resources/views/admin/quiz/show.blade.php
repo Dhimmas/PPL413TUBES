@@ -1,4 +1,8 @@
 <x-app-layout>
+<pre>
+Quiz ID: {{ $quiz->id }}
+Jumlah soal: {{ $quiz->questions->count() }}
+</pre>
 <div class="container mx-auto p-4">
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
         {{-- Quiz Header --}}
@@ -32,7 +36,7 @@
                     @foreach($quiz->questions as $question)
                     <div class="border rounded-lg p-4">
                         <div class="flex justify-between items-start">
-                            <h3 class="font-bold">Soal #{{ $loop->iteration }}</h3>
+                            <h3 class="font-bold">Soal {{ $loop->iteration }}</h3>
                             <span class="bg-gray-100 px-2 py-1 text-xs rounded">
                                 {{ ucfirst(str_replace('_', ' ', $question->question_type)) }}
                             </span>
@@ -52,10 +56,10 @@
                                         @foreach($question->options as $index => $option)
                                             <div class="flex items-center gap-2">
                                                 <div class="w-6 h-6 rounded-full border flex items-center justify-center 
-                                                    {{ $index == $question->correct_option ? 'bg-green-100 border-green-500' : 'bg-gray-100' }}">
+                                                    {{ $option === $question->correct_answer ? 'bg-green-100 border-green-500' : 'bg-gray-100' }}">
                                                     {{ chr(65 + $index) }}
                                                 </div>
-                                                <span class="{{ $index == $question->correct_option ? 'font-medium text-green-700' : '' }}">
+                                                <span class="{{ $option === $question->correct_answer ? 'font-medium text-green-700' : '' }}">
                                                     {{ $option }}
                                                 </span>
                                             </div>
@@ -79,8 +83,8 @@
             @endif
         </div>
 
-        {{-- Action Buttons --}}
-        <div class="p-6 border-t flex justify-between">
+        {{-- Action Buttons --}}  
+            <div class="p-6 border-t flex justify-between">
             <div>
                 @auth
                     @if(auth()->user()->is_admin)
@@ -89,8 +93,7 @@
                         </a>
                     @endif
                 @endauth
-            </div>
-            
+            </div>      
             <div>
                 <a href="{{ route('quiz.result', $quiz->id) }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition">
                     Lihat Hasil
