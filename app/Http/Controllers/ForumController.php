@@ -6,6 +6,7 @@ use App\Models\ForumPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Models\Comment;
 
 class ForumController extends Controller
 {
@@ -33,24 +34,44 @@ class ForumController extends Controller
         return view('forum.create');
     }
 
-    public function store(Request $request)
+    public function storeComment(Request $request, ForumPost $post)
     {
-        // Validasi inputan
         $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
+            'content' => 'required',
         ]);
-
-        // Membuat post baru
-        ForumPost::create([
-            'title' => $request->title,
+    
+        Comment::create([
+            'user_id' => auth()->id(),
+            'forum_post_id' => $post->id,
             'content' => $request->content,
-            'user_id' => Auth::id(),
         ]);
-
-        // Redirect ke halaman forum setelah create
-        return redirect()->route('forum.index')->with('success', 'Diskusi berhasil dibuat!');
+    
+        return redirect()->route('forum.show', $post->id)->with('success', 'Komentar berhasil ditambahkan.');
     }
+
+    public function store(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+    ]);
+
+    $imagePath = null;
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('forum_images', 'public');
+    }
+
+    ForumPost::create([
+        'user_id' => auth()->id(),
+        'title' => $request->title,
+        'content' => $request->content,
+        'image' => $imagePath,
+    ]);
+
+    return redirect()->route('forum.index')->with('success', 'Postingan berhasil ditambahkan!');
+}
+
 
     public function edit($id)
     {
