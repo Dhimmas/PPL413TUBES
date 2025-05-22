@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\UserQuizController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TodoController;
 
 // Redirect root ke dashboard
 Route::get('/', function () {
@@ -64,6 +65,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/quiz/{quiz}/attempt', [UserQuizController::class, 'submit'])->name('quiz.attempt.store');
     Route::post('/quiz/result', [QuizController::class, 'result'])->name('quiz.result');
     
+    // To Do
+    Route::prefix('todos')->group(function () {
+        Route::get('/', [TodoController::class, 'index'])->name('todos.index');
+        Route::post('/', [TodoController::class, 'store'])->name('todos.store');
+        Route::put('/{task}', [TodoController::class, 'update'])->name('todos.update');
+        Route::delete('/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
+    });
 });
 
 //Route Admin
