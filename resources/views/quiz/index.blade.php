@@ -40,9 +40,15 @@
                     </div>
                     {{-- Action Buttons --}}
                     <div class="flex flex-col gap-2">
-                        <a href="{{ route('quiz.attempt', $quiz->id) }}" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded transition">
-                            attempt
-                        </a>
+                        @if(in_array($quiz->id, $UserQuizResults))
+                            <a href="{{ route('quiz.result', $quiz->id) }}" class="flex-1 bg-green-500 hover:bg-green-600 text-white text-center py-2 rounded transition">
+                                Lihat Hasil
+                            </a>
+                        @else
+                            <a href="{{ route('quiz.attempt', $quiz->id) }}" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded transition">
+                                Attempt
+                            </a>
+                        @endif
                         @auth
                             @if(auth()->user()->is_admin)
                                 <a href="{{ route('admin.quiz.show', $quiz->id) }}" class="bg-green-500 hover:bg-green-600 text-white text-center py-2 rounded transition">

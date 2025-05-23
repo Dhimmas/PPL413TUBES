@@ -112,7 +112,7 @@
             <nav class="space-y-4">
                 @foreach([
                     ['🏠', 'Home', 'dashboard'],
-                    ['📝', 'To-Do', 'to_do'],
+                    ['📝', 'To-Do', 'todos.index'],
                     ['🎯', 'Goals', 'goals'],
                     ['📈', 'Progress', 'progress'],
                     ['👤', 'Profile', 'profile.edit'],
@@ -156,7 +156,7 @@
             <nav class="space-y-4">
                 @foreach([
                     ['🏠', 'Home', 'dashboard'],
-                    ['📝', 'To-Do', 'to_do'],
+                    ['📝', 'To-Do', 'todos.index'],
                     ['🎯', 'Goals', 'goals'],
                     ['📈', 'Progress', 'progress'],
                     ['👤', 'Profile', 'profile.edit'],

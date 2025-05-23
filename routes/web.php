@@ -58,20 +58,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/chatbot', function () {
         return view('maintenance'); // Pastikan view ini ada
     })->name('chatbot');
+    
+    // To Do
+    Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
+    Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
+    Route::put('/todos/{task}', [TodoController::class, 'update'])->name('todos.update');
+    Route::delete('/todos/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
 
     // Quiz Route
     Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
     Route::get('/quiz/{quiz}/attempt', [UserQuizController::class, 'attempt'])->name('quiz.attempt');
     Route::post('/quiz/{quiz}/attempt', [UserQuizController::class, 'submit'])->name('quiz.attempt.store');
-    Route::post('/quiz/result', [QuizController::class, 'result'])->name('quiz.result');
-    
-    // To Do
-    Route::prefix('todos')->group(function () {
-        Route::get('/', [TodoController::class, 'index'])->name('todos.index');
-        Route::post('/', [TodoController::class, 'store'])->name('todos.store');
-        Route::put('/{task}', [TodoController::class, 'update'])->name('todos.update');
-        Route::delete('/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
-    });
+    Route::get('/quiz/{quiz}/result', [UserQuizController::class, 'result'])->name('quiz.result');
 });
 
 //Route Admin

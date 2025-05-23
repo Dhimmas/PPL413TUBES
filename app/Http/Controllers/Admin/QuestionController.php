@@ -84,6 +84,7 @@ class QuestionController extends Controller
     {
         $questions = Question::findOrFail($id);
         $questions -> delete();
-        return with('Questions berhasil dihapus'); //<- belum bener
+        
+        return redirect()->route('admin.quiz.index')->with('success', 'Soal berhasil dihapus!');
     }
 }

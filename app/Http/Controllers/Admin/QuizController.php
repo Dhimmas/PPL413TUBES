@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Quiz;
+use App\Models\UserQuizResult;
 use App\Models\Category;
 
 class QuizController extends Controller
@@ -23,7 +24,17 @@ class QuizController extends Controller
             $quizzes = Quiz::has('questions')->get();
         }
 
-        return view('quiz.index', compact('quizzes'));
+        $UserQuizResult = [];
+        if (auth()->check()) {
+            $UserQuizResult = UserQuizResult::where('user_id', auth()->id())
+            ->pluck('quiz_id')
+            ->toArray();
+        }
+
+        return view('quiz.index', [
+            'quizzes' => $quizzes,
+            'UserQuizResults' => $UserQuizResult, // <- harus disamakan dengan yang di blade
+        ]);
     }
 
     /**
