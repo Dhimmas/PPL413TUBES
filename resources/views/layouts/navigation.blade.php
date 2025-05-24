@@ -116,7 +116,7 @@
                     ['🎯', 'Goals', 'goals'],
                     ['📈', 'Progress', 'progress'],
                     ['👤', 'Profile', 'profile.edit'],
-                    ['🤖', 'Chatbot', 'chatbot'],
+                    ['🤖', 'Chatbot', 'user.chatbot.index'],
                     ['🎓', 'Quiz', 'quiz.index'],
                     ['💬', 'Forum Diskusi', 'forum.index'],
                 ] as [$icon, $label, $routeName])
@@ -160,7 +160,7 @@
                     ['🎯', 'Goals', 'goals'],
                     ['📈', 'Progress', 'progress'],
                     ['👤', 'Profile', 'profile.edit'],
-                    ['🤖', 'Chatbot', 'chatbot'],
+                    ['🤖', 'Chatbot', 'user.chatbot.index'],
                     ['🎓', 'Quiz', 'quiz.index'],
                     ['💬', 'Forum Diskusi', 'forum.index'], // Correct route name
                 ] as [$icon, $label, $routeName])

@@ -16,7 +16,7 @@ class ChatController extends Controller
         $conversations = Conversation::latest()->get();
 
         // Return view dengan data percakapan
-        return view('Admin.index', compact('conversations'));
+        return view('admin.chatbotz.index', compact('conversations'));
     }
 
     public function user_index()
