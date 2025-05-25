@@ -201,8 +201,9 @@
       }
     }
   </style>
+</head>
 
-  <script>
+<script>
     async function sendInput() {
       const chatBody = document.querySelector(".chat-body");
       const userInput = document.getElementById("user_input").value.trim();
@@ -252,7 +253,6 @@
       }
     }
   </script>
-</head>
 
 <body>
   <div class="chat-container">
