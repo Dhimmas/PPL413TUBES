@@ -220,7 +220,7 @@
       formData.append("_token", document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/chatbot", {
+        const response = await fetch("/chatbot", {
           method: "POST",
           headers: { "Accept": "application/json" },
           body: formData
