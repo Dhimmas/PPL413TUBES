@@ -38,7 +38,7 @@
 
                 // Kirim pesan ke server menggunakan AJAX
                 $.ajax({
-                    url: "{{ route('chatbot.send') }}",
+                    url: "{{ route('admin.chatbot.send') }}",
                     method: "POST",
                     data: {
                         user_input: userInput,

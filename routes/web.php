@@ -57,23 +57,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Route Chatbot
-    Route::get('chatbot', [ChatController::class, 'user_index'])->name('user.chatbot.index');
+    Route::get('/chatbot', [ChatController::class, 'user_index'])->name('user.chatbot.index');
     //controller user
     Route::post('/chatbot/store', [ChatController::class, 'store'])->name('chatbot.store');
-    Route::post('/chatbot', function (Request $request) {
-    // Rute untuk halaman riwayat chat
-    Route::get('admin/chatbotz/chatbot', [ChatController::class, 'index'])->name('chatbot.index');
-    // Rute untuk mengirim pesan admin dan memperbarui respon chatbot
-    Route::post('/chatbot/chatbotz/send', [ChatController::class, 'sendAndUpdateResponse'])->name('chatbot.send');
-    // Rute untuk menghapus percakapan berdasarkan ID
-    Route::delete('/chatbot/{id}', [ChatController::class, 'destroy'])->name('chatbot.destroy');
-    // Rute untuk mengedit percakapan berdasarkan ID (dengan form)
-    Route::get('/chatbot/{id}/edit', [ChatController::class, 'edit'])->name('chatbot.edit');
-    // Rute untuk memperbarui percakapan berdasarkan ID
-    Route::put('/chatbot/{id}', [ChatController::class, 'update'])->name('chatbot.update');
-    //index user
-
-        // Ambil input dari user
+    Route::post('/chatbot', function (Request $request) {        // Ambil input dari user
         $userInput = strtolower($request->input('user_input'));
         $response = Conversation::where('user_input','like','%'. $userInput.'%')->first();
 
@@ -108,6 +95,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Nested resource khusus untuk soal di dalam quiz
     Route::get('quiz/{quiz}/questions/create', [QuestionController::class, 'create'])->name('questions.create');
     Route::post('quiz/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
+    // Rute untuk halaman riwayat chat
+    Route::get('chatbot/chatbotz', [ChatController::class, 'index'])->name('chatbot.index');
+    // Rute untuk mengirim pesan admin dan memperbarui respon chatbot
+    Route::post('/chatbotz/chatbot/send', [ChatController::class, 'sendAndUpdateResponse'])->name('chatbot.send');
+    // Rute untuk menghapus percakapan berdasarkan ID
+    Route::delete('/chatbot/{id}', [ChatController::class, 'destroy'])->name('chatbot.destroy');
+    // Rute untuk mengedit percakapan berdasarkan ID (dengan form)
+    Route::get('/chatbot/{id}/edit', [ChatController::class, 'edit'])->name('chatbot.edit');
+    // Rute untuk memperbarui percakapan berdasarkan ID
+    Route::put('/chatbot/{id}', [ChatController::class, 'update'])->name('chatbot.update');
 });
 
     Route::fallback(function () {

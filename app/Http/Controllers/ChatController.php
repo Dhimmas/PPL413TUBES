@@ -47,7 +47,7 @@ class ChatController extends Controller
         $conversation->save();
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('chatbot.index')->with('success', 'Pesan dan respon chatbot berhasil diperbarui.');
+        return redirect()->route('admin.chatbot.index')->with('success', 'Pesan dan respon chatbot berhasil diperbarui.');
     }
 
     /**
