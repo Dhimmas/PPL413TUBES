@@ -105,18 +105,19 @@ class ChatController extends Controller
     }
     public function chat(Request $request)
     {
-        $userInput = strtolower($request->input('user_input'));
-        $response = Conversation::where('user_input','like','%'. $userInput.'%')->first();
+        $request->validate([
+            'user_input' => 'required|string',
+        ]);
 
-        // Jika respons sudah ada di database
+        $userInput = strtolower($request->input('user_input'));
+        $response = Conversation::where('user_input', 'like', '%' . $userInput . '%')->first();
+
         if ($response) {
             $responseMessage = $response->bot_response;
         } else {
-            // Jika respons belum ada di database
             $responseMessage = 'Maaf, saya tidak mengerti pertanyaan Anda.';
         }
 
-        // Kembalikan respons JSON
         return response()->json(['response' => $responseMessage]);
     }
 }
