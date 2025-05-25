@@ -103,4 +103,20 @@ class ChatController extends Controller
         // Redirect kembali dengan pesan sukses
         return redirect()->back()->with('success', 'Pesan Anda berhasil terkirim!');
     }
+    public function chat(Request $request)
+    {
+        $userInput = strtolower($request->input('user_input'));
+        $response = Conversation::where('user_input','like','%'. $userInput.'%')->first();
+
+        // Jika respons sudah ada di database
+        if ($response) {
+            $responseMessage = $response->bot_response;
+        } else {
+            // Jika respons belum ada di database
+            $responseMessage = 'Maaf, saya tidak mengerti pertanyaan Anda.';
+        }
+
+        // Kembalikan respons JSON
+        return response()->json(['response' => $responseMessage]);
+    }
 }

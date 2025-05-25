@@ -60,21 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/chatbot', [ChatController::class, 'user_index'])->name('user.chatbot.index');
     //controller user
     Route::post('/chatbot/store', [ChatController::class, 'store'])->name('chatbot.store');
-    Route::post('/chatbot', function (Request $request) {        // Ambil input dari user
-        $userInput = strtolower($request->input('user_input'));
-        $response = Conversation::where('user_input','like','%'. $userInput.'%')->first();
-
-        // Jika respons sudah ada di database
-        if ($response) {
-            $responseMessage = $response->bot_response;
-        } else {
-            // Jika respons belum ada di database
-            $responseMessage = 'Maaf, saya tidak mengerti pertanyaan Anda.';
-        }
-
-        // Kembalikan respons JSON
-        return response()->json(['response' => $responseMessage]);
-    });
+    Route::post('/chatbot', [ChatController::class, 'chat'])->name('chatbot.response');
     
     // To Do
     Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
