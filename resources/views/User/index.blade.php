@@ -224,7 +224,8 @@
         const response = await fetch("{{ url('/chatbot') }}", {
           method: "POST",
           headers: { "Accept": "application/json" },
-          body: formData
+          body: formData,
+          credentials: "same-origin"
         });
 
         const data = await response.json();

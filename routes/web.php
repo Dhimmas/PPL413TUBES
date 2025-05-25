@@ -11,11 +11,6 @@ use Illuminate\Http\Request;
 use App\Models\Conversation;
 use App\Http\Controllers\TodoController;
 
-// Redirect root ke dashboard
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
-
 // Redirect root ke welcome
 Route::get('/', function () {
     return view('welcome');
