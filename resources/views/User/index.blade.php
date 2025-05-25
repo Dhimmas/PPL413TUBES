@@ -220,7 +220,7 @@
       formData.append("_token", document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
       try {
-        const response = await fetch("/chatbot", {
+        const response = await fetch("{{ url('/chatbot') }}", {
           method: "POST",
           headers: { "Accept": "application/json" },
           body: formData
