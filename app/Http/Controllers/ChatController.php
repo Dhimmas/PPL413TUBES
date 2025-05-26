@@ -111,7 +111,7 @@ class ChatController extends Controller
             ]);
 
             $userInput = strtolower($request->input('user_input'));
-            $response = Conversation::where('user_input', 'like', '%' . $userInput . '%')->first();
+            $response = \App\Models\Conversation::where('user_input', 'like', '%' . $userInput . '%')->first(); // Pastikan namespace model benar
 
             if ($response) {
                 $responseMessage = $response->bot_response;
@@ -121,8 +121,12 @@ class ChatController extends Controller
 
             return response()->json(['response' => $responseMessage]);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+            
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            \Illuminate\Support\Facades\Log::error('Chatbot API error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan internal.'], 500);
         }
     }
 }
