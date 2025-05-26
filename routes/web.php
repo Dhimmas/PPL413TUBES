@@ -53,7 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Route Chatbot
     //controller user
-    Route::get('/chatbot', [ChatController::class, 'chat'])->name('user.chatbot.index');
+    Route::get('/chatbot', [ChatController::class, 'user_index'])->name('user.chatbot.index');
     Route::post('/chatbot', [ChatController::class, 'chat'])->name('chatbot.send_message');
     Route::post('/chatbot/store', [ChatController::class, 'store'])->name('chatbot.store');
     
