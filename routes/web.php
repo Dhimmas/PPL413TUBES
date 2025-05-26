@@ -52,10 +52,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Route Chatbot
-    Route::get('/chatbot', [ChatController::class, 'user_index'])->name('user.chatbot.index');
+    Route::get('/chatbot', [ChatController::class, 'chat'])->name('user.chatbot.index');
     //controller user
     Route::post('/chatbot/store', [ChatController::class, 'store'])->name('chatbot.store');
-    Route::post('/chatbot/response', [ChatController::class, 'chat'])->name('chatbot.response');
     
     // To Do
     Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
