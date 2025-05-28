@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\UserQuizController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PomodoroController;
 
 // Redirect root ke dashboard
 Route::get('/', function () {
@@ -63,6 +64,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/quiz/{quiz}/attempt', [UserQuizController::class, 'attempt'])->name('quiz.attempt');
     Route::post('/quiz/{quiz}/attempt', [UserQuizController::class, 'submit'])->name('quiz.attempt.store');
     Route::post('/quiz/result', [QuizController::class, 'result'])->name('quiz.result');
+    
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/pomodoro', [PomodoroController::class, 'index'])->name('pomodoro.index');
+        Route::post('/pomodoro', [PomodoroController::class, 'store'])->name('pomodoro.store');
+    });
     
 });
 
