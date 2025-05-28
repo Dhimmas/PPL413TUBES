@@ -81,7 +81,8 @@ class QuizController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'nullable|exists:categories,id',
-            'new_category' => 'nullable|string|max:255|unique:categories,name'
+            'new_category' => 'nullable|string|max:255|unique:categories,name',
+            'time_limit' => 'required | integer | min:1'
         ]);
 
         // Handle kategori baru
@@ -134,6 +135,7 @@ class QuizController extends Controller
             'description' => 'nullable',
             'image' => 'nullable|url',
             'category_id' => 'required|exists:categories,id',
+            'time_limit' => 'required | integer | min:1'
         ]);
         $quiz = Quiz::findOrFail($id);
         $quiz->update($validated);
