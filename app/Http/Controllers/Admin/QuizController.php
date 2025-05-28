@@ -5,25 +5,61 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Quiz;
+use App\Models\UserQuizResult;
 use App\Models\Category;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class QuizController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $quizzes = Quiz::with('category')->get(); 
-        if (auth()->user()->is_admin) {
-        // Admin lihat semua quiz
-        $quizzes = Quiz::all();
-        } else {
-            // User hanya lihat quiz yang ada soal
-            $quizzes = Quiz::has('questions')->get();
+        $query = Quiz::with('category')->withCount('questions');
+
+        // Filter berdasarkan kategori
+        // Menggunakan slug untuk filter
+        if ($request->has('category') && $request->category != '') {
+            $categorySlug = $request->category;
+            $category = Category::where('slug', $categorySlug)->first();
+
+            if ($category) {
+                $query->where('category_id', $category->id);
+            } else {
+                // Jika slug kategori tidak valid, kita bisa mengabaikan filter atau memberikan pesan error khusus.
+                // Untuk kasus ini, kita biarkan query berjalan tanpa filter kategori.
+            }
         }
 
-        return view('quiz.index', compact('quizzes'));
+        // Filter berdasarkan pencarian judul
+        if ($request->has('search') && $request->search != '') {
+            $searchTerm = $request->search;
+            $query->where('title', 'like', '%' . $searchTerm . '%');
+        }
+
+        // Logika untuk admin dan user biasa
+        if (Auth::check() && Auth::user()->is_admin) {
+            // Admin melihat semua quiz (kecuali difilter di atas)
+        } else {
+            // User biasa hanya melihat quiz yang memiliki soal
+            $query->has('questions');
+        }
+
+        $quizzes = $query->paginate(9)->withQueryString(); // Tambahkan withQueryString() agar filter tetap aktif saat navigasi pagination
+
+        $UserQuizResults = [];
+        if (Auth::check()) {
+            $UserQuizResults = Auth::user()->quizResults()->pluck('quiz_id')->toArray();
+        }
+
+        $categories = Category::all(); // Ambil semua kategori untuk dropdown filter
+
+        // Mendapatkan kategori yang sedang aktif (jika ada)
+        $currentCategory = $request->category ? Category::where('slug', $request->category)->first() : null;
+
+        return view('quiz.index', compact('quizzes', 'UserQuizResults', 'categories', 'currentCategory'));
     }
 
     /**
@@ -45,12 +81,16 @@ class QuizController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'nullable|exists:categories,id',
-            'new_category' => 'nullable|string|max:255|unique:categories,name'
+            'new_category' => 'nullable|string|max:255|unique:categories,name',
+            'time_limit' => 'required | integer | min:1'
         ]);
 
         // Handle kategori baru
         if (!empty($validated['new_category'])) {
-            $category = Category::create(['name' => $validated['new_category']]);
+            $category = Category::create([
+                'name' => $validated['new_category'],
+                'slug' => Str::slug($validated['new_category'])
+            ]);
             $validated['category_id'] = $category->id;
         }
 
@@ -95,6 +135,7 @@ class QuizController extends Controller
             'description' => 'nullable',
             'image' => 'nullable|url',
             'category_id' => 'required|exists:categories,id',
+            'time_limit' => 'required | integer | min:1'
         ]);
         $quiz = Quiz::findOrFail($id);
         $quiz->update($validated);

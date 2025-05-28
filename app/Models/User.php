@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\UserQuizResult;
 use App\Models\UserProfile;
 
 class User extends Authenticatable
@@ -50,5 +51,10 @@ class User extends Authenticatable
     public function profile()
     {
         return $this->hasOne(Profile::class);
+    }
+    
+    public function quizResults()
+    {
+        return $this->hasMany(UserQuizResult::class);
     }
 }

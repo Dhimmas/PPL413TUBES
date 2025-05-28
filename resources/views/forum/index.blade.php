@@ -1,7 +1,5 @@
 <x-app-layout>
 
-    @include('layouts.navigation')
-
     <div class="max-w-7xl mx-auto mt-16 mb-12 px-4 sm:px-6 lg:px-8">
         {{-- Header Section --}}
         <div class="flex flex-col lg:flex-row justify-between items-center mb-12 gap-8">

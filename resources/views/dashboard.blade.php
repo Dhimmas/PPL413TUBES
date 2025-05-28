@@ -4,27 +4,13 @@
         $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good Evening');
     @endphp
 
-    @include('layouts.navigation')
+        <!-- Main Content -->
+        <main class="flex-1 ml-0 md:ml-64 p-6 text-white">
+            <!-- Greeting -->
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold mb-1">{{ $greeting }}, {{ auth()->user()->name }}</h2>
+                <p class="text-white/70">We wish you have a productive day!</p>
 
-    <!-- Main Content -->
-    <main class="flex-1 ml-0 md:ml-64 p-6">
-        <!-- Greeting Section with Animation -->
-        <div class="mb-8 relative">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl"></div>
-            <div class="relative bg-white/10 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-2xl">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-4xl font-bold mb-2 text-white bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                            {{ $greeting }}, {{ auth()->user()->name }}
-                        </h2>
-                        <p class="text-white/80 text-lg">✨ Ready to make today productive? Let's get started!</p>
-                    </div>
-                    <div class="hidden md:block">
-                        <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                            <span class="text-3xl">🌟</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 

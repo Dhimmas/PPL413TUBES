@@ -5,14 +5,12 @@ use App\Http\Controllers\ForumController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\UserQuizController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PomodoroController;
-
-// Redirect root ke dashboard
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
+use Illuminate\Http\Request;
+use App\Models\Conversation;
+use App\Http\Controllers\TodoController;
 
 // Redirect root ke welcome
 Route::get('/', function () {
@@ -54,10 +52,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 
-    // Chatbot Route
-    Route::get('/chatbot', function () {
-        return view('maintenance'); // Pastikan view ini ada
-    })->name('chatbot');
+    // Route Chatbot
+    //controller user
+    Route::get('/chatbot', [ChatController::class, 'user_index'])->name('user.chatbot.index');
+    Route::post('/chatbot', [ChatController::class, 'chat'])->name('chatbot.send_message');
+    
+    // To Do
+    Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
+    Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
+    Route::put('/todos/{task}', [TodoController::class, 'update'])->name('todos.update');
+    Route::delete('/todos/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
 
     // Quiz Route
     Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
@@ -70,6 +74,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/pomodoro', [PomodoroController::class, 'store'])->name('pomodoro.store');
     });
     
+    Route::get('/quiz/{quiz}/result', [UserQuizController::class, 'result'])->name('quiz.result');
 });
 
 //Route Admin
@@ -78,6 +83,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Nested resource khusus untuk soal di dalam quiz
     Route::get('quiz/{quiz}/questions/create', [QuestionController::class, 'create'])->name('questions.create');
     Route::post('quiz/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
+    // Rute untuk halaman riwayat chat
+    Route::get('chatbot/chatbotz', [ChatController::class, 'index'])->name('chatbot.index');
+    // Rute untuk mengirim pesan admin dan memperbarui respon chatbot
+    Route::post('/chatbotz/chatbot/send', [ChatController::class, 'sendAndUpdateResponse'])->name('chatbot.send');
+    // Rute untuk menghapus percakapan berdasarkan ID
+    Route::delete('/chatbot/{id}', [ChatController::class, 'destroy'])->name('chatbot.destroy');
+    // Rute untuk mengedit percakapan berdasarkan ID (dengan form)
+    Route::get('/chatbot/{id}/edit', [ChatController::class, 'edit'])->name('chatbot.edit');
+    // Rute untuk memperbarui percakapan berdasarkan ID
+    Route::put('/chatbot/{id}', [ChatController::class, 'update'])->name('chatbot.update');
 });
 
     Route::fallback(function () {

@@ -1,0 +1,63 @@
+@keyframes gradient-pulse {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.animate-gradient-pulse {
+    background-size: 200% auto;
+    animation: gradient-pulse 4s ease infinite;
+}
+
+/* Tailwind-like styling for pagination, targeting Laravel's default output */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination li {
+    margin: 0 0.25rem; /* Equivalent to mx-1 */
+}
+
+.pagination li span,
+.pagination li a {
+    display: block;
+    padding: 0.75rem 1.25rem; /* Equivalent to px-5 py-3 */
+    border-radius: 0.75rem; /* Equivalent to rounded-xl */
+    transition: all 0.2s ease-in-out;
+    font-weight: 500;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7); /* text-white/70 */
+    background-color: rgba(255, 255, 255, 0.05); /* bg-white/5 */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* border-white/10 */
+}
+
+.pagination li a:hover {
+    background-color: rgba(255, 255, 255, 0.15); /* hover:bg-white/15 */
+    color: white;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.pagination li.active span {
+    background-image: linear-gradient(to right, #3b82f6, #8b5cf6); /* from-blue-500 to-purple-600 */
+    color: white;
+    font-weight: 700;
+    border-color: transparent;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* shadow-lg */
+}
+
+.pagination li.disabled span {
+    color: rgba(255, 255, 255, 0.4); /* text-white/40 */
+    pointer-events: none;
+    background-color: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Improve spacing for prev/next buttons if they exist */
+.pagination li:first-child a,
+.pagination li:last-child a {
+    padding-left: 1.5rem; /* px-6 */
+    padding-right: 1.5rem; /* px-6 */
+}
