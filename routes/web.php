@@ -5,6 +5,7 @@ use App\Http\Controllers\ForumController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\UserQuizController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -55,7 +56,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //controller user
     Route::get('/chatbot', [ChatController::class, 'user_index'])->name('user.chatbot.index');
     Route::post('/chatbot', [ChatController::class, 'chat'])->name('chatbot.send_message');
-    Route::post('/chatbot/store', [ChatController::class, 'store'])->name('chatbot.store');
     
     // To Do
     Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');

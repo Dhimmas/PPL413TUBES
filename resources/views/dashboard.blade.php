@@ -4,10 +4,8 @@
         $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good Evening');
     @endphp
 
-    @include('layouts.navigation')
-
         <!-- Main Content -->
-        <main class="flex-1 ml-0 md:ml-64 p-6">
+        <main class="flex-1 ml-0 md:ml-64 p-6 text-white">
             <!-- Greeting -->
             <div class="mb-6">
                 <h2 class="text-2xl font-bold mb-1">{{ $greeting }}, {{ auth()->user()->name }}</h2>
