@@ -1,0 +1,235 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #021C2D; /* Latar belakang gelap */
+}
+
+/* Goal Form Container */
+.goal-form-container {
+    position: relative;
+    background-color: transparent !important;
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    font-family: 'Arial', sans-serif;
+    min-height: 400px;
+}
+
+/* Tombol Add Goal di pojok kanan bawah */
+.form-submit-wrapper {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+/* Form header */
+.goal-form-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: white;
+}
+
+/* Form Group Styling */
+.goal-form .form-group {
+    margin-bottom: 20px;
+}
+
+.goal-form .form-group label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.goal-form .form-group input,
+.goal-form .form-group button {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+/* Button Styling */
+.goal-form .form-group button {
+    background-color: white;
+    color: #160757;
+    border: none;
+    cursor: pointer;
+}
+
+.goal-form .form-group button i {
+    margin-right: 10px;
+}
+
+/* Hover Effect for Buttons */
+.goal-form .form-group button:hover {
+    background-color: #e5e5e5;
+}
+
+/* Submit Button */
+.submit-btn {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #45a049;
+}
+
+/* Responsif untuk tombol tanggal */
+.goal-form .form-group button,
+.goal-form .form-group input[type="date"] {
+    display: inline-block;
+    width: auto;
+    margin-right: 10px;
+}
+
+/* Responsif untuk form pada perangkat mobile */
+@media (max-width: 600px) {
+    .goal-form-container {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .goal-form .form-group input,
+    .goal-form .form-group button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    /* Agar tombol "submit" rapi di perangkat mobile */
+    .form-submit-wrapper {
+        position: static;
+        margin-top: 20px;
+        text-align: right;
+    }
+}
+
+/* Styling untuk tombol tanggal */
+.date-btn {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Styling untuk kalender (flatpickr) */
+.flatpickr-calendar {
+    font-size: 14px;
+    width: 260px !important;
+    max-width: 100%;
+    position: absolute;
+    z-index: 9999 !important;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    visibility: hidden;  /* Kalender tidak terlihat saat tombol belum diklik */
+    transition: visibility 0.3s ease, opacity 0.3s ease;
+}
+
+/* Menampilkan kalender saat tombol diklik */
+.flatpickr-calendar.open {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Menyesuaikan posisi kalender agar muncul tepat di atas tombol */
+.flatpickr-calendar {
+    margin-top: 10px; /* Penyesuaian jarak dari tombol */
+    top: -10px; /* Kalender muncul tepat di atas tombol */
+}
+
+/* Responsif untuk kalender di perangkat mobile */
+@media (max-width: 600px) {
+    .flatpickr-calendar {
+        top: -220px; /* Sesuaikan posisi kalender pada layar kecil */
+    }
+}
+
+
+/* Untuk mengecilkan kotak tanggal */
+.flatpickr-day {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 13px;
+}
+
+/* Header kalender (bulan & tahun) */
+.flatpickr-months {
+    font-size: 14px;
+}
+
+/* Navigasi bulan (tanda panah) */
+.flatpickr-prev-month,
+.flatpickr-next-month {
+    font-size: 14px;
+}
+
+/* Style untuk tombol-tombol tanggal agar lebih rapi */
+.date-btn {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Styling untuk kalender (flatpickr) */
+/* Styling untuk kalender (flatpickr) */
+.flatpickr-calendar {
+    font-size: 14px;
+    width: 300px !important; /* Menetapkan lebar dengan satuan yang benar */
+    max-width: 100%;
+    position: absolute;
+    z-index: 9999 !important;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    visibility: hidden;  /* Kalender tidak terlihat saat tombol belum diklik */
+    margin-top: 10px; /* Menambahkan margin atas kalender untuk jarak yang lebih baik */
+}
+
+/* Menampilkan kalender */
+.flatpickr-calendar.open {
+    visibility: visible;
+}
+
+/* Responsif untuk kalender di perangkat mobile */
+@media (max-width: 600px) {
+    .flatpickr-calendar {
+        width: 100% !important; /* Pastikan kalender mengisi layar di perangkat kecil */
+        top: auto; /* Mengatur posisi top menjadi auto */
+        left: 0;
+        min-width: 250px !important; /* Tentukan lebar minimum pada perangkat kecil */
+    }
+
+    /* Agar form lebih rapi di perangkat mobile */
+    .form-submit-wrapper {
+        position: static;
+        margin-top: 20px;
+        text-align: right;
+    }
+}
+
+
+.container,
+.main-content,
+.goal-form-container {
+    background: transparent !important;
+}
