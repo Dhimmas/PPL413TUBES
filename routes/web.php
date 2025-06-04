@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\Conversation;
 use App\Http\Controllers\TodoController;
-use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\TaskController;
 
 // Redirect root ke welcome
 Route::get('/', function () {
@@ -81,22 +81,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/quiz/{quiz}/result', [UserQuizController::class, 'result'])->name('quiz.result');
 });
 
-    Route::prefix('progress-tracker')->name('tracker.')->group(function () {
 
-    // Halaman utama menampilkan 3 kolom (Not Yet Started, On Progress, Finished) + Deadline Section
-    // View: resources/views/tracking/index.blade.php
-    Route::get('/', [TrackingController::class, 'index'])->name('index');
-
-    // Menampilkan detail list berdasarkan status (not_started, on_progress, finished)
-    // View: resources/views/tracking/detail.blade.php
-    // Contoh: /progress-tracker/status/not_started
-    Route::get('/status/{status}', [TrackingController::class, 'byStatus'])->name('byStatus');
-
-    // Mengupdate status task (misalnya dari not_started menjadi on_progress)
-    // Digunakan saat klik tombol update status
-    Route::patch('/update-status/{task}', [TrackingController::class, 'updateStatus'])->name('updateStatus');
-
-});
+Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+Route::post('/tasks', [TaskController::class, 'store']);
+Route::post('/tasks/{id}/status/{status}', [TaskController::class, 'updateStatus']);
 
 //Route Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
