@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\Conversation;
 use App\Http\Controllers\TodoController;
+use App\Http\Controllers\TrackingController;
 
 // Redirect root ke welcome
 Route::get('/', function () {
@@ -62,6 +63,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
     Route::put('/todos/{task}', [TodoController::class, 'update'])->name('todos.update');
     Route::delete('/todos/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
+    Route::put('/todos/status/{task}', [TodoController::class, 'updateStatus'])->name('todos.updateStatus');
+    Route::patch('/todos/completed/{task}', [TodoController::class, 'updateCompleted'])->name('todos.updateCompleted');
+    Route::delete('/todos/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
 
     // Quiz Route
     Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
@@ -75,6 +79,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
     
     Route::get('/quiz/{quiz}/result', [UserQuizController::class, 'result'])->name('quiz.result');
+});
+
+    Route::prefix('progress-tracker')->name('tracker.')->group(function () {
+
+    // Halaman utama menampilkan 3 kolom (Not Yet Started, On Progress, Finished) + Deadline Section
+    // View: resources/views/tracking/index.blade.php
+    Route::get('/', [TrackingController::class, 'index'])->name('index');
+
+    // Menampilkan detail list berdasarkan status (not_started, on_progress, finished)
+    // View: resources/views/tracking/detail.blade.php
+    // Contoh: /progress-tracker/status/not_started
+    Route::get('/status/{status}', [TrackingController::class, 'byStatus'])->name('byStatus');
+
+    // Mengupdate status task (misalnya dari not_started menjadi on_progress)
+    // Digunakan saat klik tombol update status
+    Route::patch('/update-status/{task}', [TrackingController::class, 'updateStatus'])->name('updateStatus');
+
 });
 
 //Route Admin
