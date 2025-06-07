@@ -9,9 +9,12 @@ class UserQuizResult extends Model
     protected $fillable = [
         'user_id',
         'quiz_id',
+        'status',
         'score',
         'started_at',
         'finished_at',
+        'ends_at',
+        'last_question_id'
     ];
 
     public function user()

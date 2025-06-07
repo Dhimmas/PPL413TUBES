@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\UserQuizController;
+use App\Http\Controllers\PomodoroController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\Conversation;
@@ -66,8 +67,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Quiz Route
     Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
     Route::get('/quiz/{quiz}/attempt', [UserQuizController::class, 'attempt'])->name('quiz.attempt');
-    Route::post('/quiz/{quiz}/attempt', [UserQuizController::class, 'submit'])->name('quiz.attempt.store');
-    Route::post('/quiz/result', [QuizController::class, 'result'])->name('quiz.result');
+    Route::post('/quiz/{quiz}/submit-answer', [UserQuizController::class, 'submitAnswer'])->name('quiz.attempt.submitAnswer');
+    Route::post('/quiz/result/{result}/finalize', [UserQuizController::class, 'finalizeQuiz'])->name('quiz.finalize');
+    Route::get('/quiz/{quiz}/get-question/{questionNumber}', [UserQuizController::class, 'getQuestionByNumber'])->name('quiz.getQuestion');
+    Route::post('/quiz/{quiz}/result', [QuizController::class, 'result'])->name('quiz.result');
     
     Route::middleware(['auth'])->group(function () {
         Route::get('/pomodoro', [PomodoroController::class, 'index'])->name('pomodoro.index');

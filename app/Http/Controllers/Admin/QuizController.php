@@ -49,9 +49,9 @@ class QuizController extends Controller
 
         $quizzes = $query->paginate(9)->withQueryString(); // Tambahkan withQueryString() agar filter tetap aktif saat navigasi pagination
 
-        $UserQuizResults = [];
+        $UserQuizStatuses = [];
         if (Auth::check()) {
-            $UserQuizResults = Auth::user()->quizResults()->pluck('quiz_id')->toArray();
+            $UserQuizStatuses = Auth::user()->quizResults()->pluck('status','quiz_id')->toArray();
         }
 
         $categories = Category::all(); // Ambil semua kategori untuk dropdown filter
@@ -59,21 +59,15 @@ class QuizController extends Controller
         // Mendapatkan kategori yang sedang aktif (jika ada)
         $currentCategory = $request->category ? Category::where('slug', $request->category)->first() : null;
 
-        return view('quiz.index', compact('quizzes', 'UserQuizResults', 'categories', 'currentCategory'));
+        return view('quiz.index', compact('quizzes', 'UserQuizStatuses', 'categories', 'currentCategory'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $categories = Category::all();
         return view('admin.quiz.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -82,7 +76,7 @@ class QuizController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'nullable|exists:categories,id',
             'new_category' => 'nullable|string|max:255|unique:categories,name',
-            'time_limit' => 'required | integer | min:1'
+            'time_limit_per_quiz' => 'nullable|integer|min:1' // Validasi ini sudah benar
         ]);
 
         // Handle kategori baru
@@ -110,14 +104,12 @@ class QuizController extends Controller
             'description' => $validated['description'] ?? null,
             'image' => $imagePath,
             'category_id' => $validated['category_id'],
+            'time_limit_per_quiz' => $validated['time_limit_per_quiz'] ?? null,
         ]);
         
         return redirect()->route('admin.questions.create', $quiz->id)->with('success', 'Quiz berhasil dibuat. Sekarang tambahkan soal!');
-    } 
+    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $quiz = Quiz::findOrFail($id);
@@ -125,17 +117,14 @@ class QuizController extends Controller
         return view('admin.quiz.edit', compact('quiz', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
             'title' => 'required',
             'description' => 'nullable',
-            'image' => 'nullable|url',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'required|exists:categories,id',
-            'time_limit' => 'required | integer | min:1'
+            'time_limit_per_quiz' => 'required|integer|min:1'
         ]);
         $quiz = Quiz::findOrFail($id);
         $quiz->update($validated);
@@ -147,9 +136,7 @@ class QuizController extends Controller
         $quiz = Quiz::with('questions')->findOrFail($id);
         return view('admin.quiz.show', compact('quiz'));
     }
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(string $id)
     {
         $quiz = Quiz::findOrFail($id);
