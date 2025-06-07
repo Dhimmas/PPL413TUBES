@@ -16,7 +16,7 @@ class IsAdmin
     public function handle($request, Closure $next): Response
     {
         if (!auth()->check() || !auth()->user()->is_admin) {
-            abort(403, 'Jadi Admin dulu ya!'); // atau redirect ke halaman lain
+            abort(403, 'ANDA BUKAN ADMIN!'); // atau redirect ke halaman lain
         }
 
         return $next($request);
