@@ -7,12 +7,12 @@
                  class="w-40 h-40 rounded-full mx-auto object-cover shadow-md" />
             <h1 class="text-3xl font-semibold mt-4">{{ $user->name }}</h1>
             <p class="text-sm text-gray-300 mt-2">{{ $user->email }}</p>
-            @if($user->tanggal_lahir)
+            <!-- @if($user->tanggal_lahir)
                 <p class="text-sm text-gray-300 mt-1">
                     {{ \Carbon\Carbon::parse($user->tanggal_lahir)->format('F Y') }} | 
                     {{ \Carbon\Carbon::parse($user->tanggal_lahir)->age }} years old
                 </p>
-            @endif
+            @endif -->
         </div>
 
         <!-- Profile Information -->
@@ -33,9 +33,9 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-300">Email</label>
                     <p class="mt-1 text-white">{{ $user->email }}</p>
-                </div>
+                <!-- </div>
                 @if($user->tanggal_lahir)
-                <div>
+                <div> -->
                     <label class="block text-sm font-medium text-gray-300">Date of Birth</label>
                     <p class="mt-1 text-white">{{ \Carbon\Carbon::parse($user->tanggal_lahir)->format('d F Y') }}</p>
                 </div>

@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -32,7 +33,7 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         $user = $request->user();
-        $profile = $user->profile ?? (object)['profile_picture' => '/images/default-avatar.png'];
+        $profile = $user->profile; // Remove the fallback since we'll create it if needed
         
         return view('profile.edit', [
             'user' => $user,
@@ -41,26 +42,42 @@ class ProfileController extends Controller
     }
 
     /**
-     * Store a new profile.
+     * Store or update profile details.
      */
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $request->user()->id],
+            'gender' => ['nullable', 'in:Laki-laki,Perempuan'],
+            'tanggal_lahir' => ['nullable', 'date'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'bio' => ['nullable', 'string', 'max:1000'],
             'profile_picture' => ['nullable', 'image', 'max:2048'],
         ]);
 
         $user = $request->user();
-        
+        $profile = $user->profile;
+
+        // Handle profile picture upload
         if ($request->hasFile('profile_picture')) {
+            // Delete old profile picture if exists
+            if ($profile && $profile->profile_picture) {
+                Storage::disk('public')->delete($profile->profile_picture);
+            }
+            
             $path = $request->file('profile_picture')->store('profile_pictures', 'public');
             $validated['profile_picture'] = $path;
         }
 
-        $user->update($validated);
+        if ($profile) {
+            // Update existing profile
+            $profile->update($validated);
+        } else {
+            // Create new profile
+            $validated['user_id'] = $user->id;
+            Profile::create($validated);
+        }
         
-        return Redirect::route('profile.show')->with('status', 'profile-created');
+        return Redirect::route('profile.edit')->with('status', 'profile-detail-updated');
     }
 
     /**
