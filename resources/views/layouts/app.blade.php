@@ -21,12 +21,10 @@
 
         <!-- Scripts (Vite akan meng-compile dan memuat app.css dan app.js) -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        dashboard-&-forum-diskusi
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
 
         @stack('head_scripts') 
-     main
     </head>
     <body class="font-sans antialiased bg-[#021c2d]">
 

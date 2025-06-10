@@ -16,47 +16,51 @@
 
         {{-- Bookmarked Posts Grid --}}
         <div id="postsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @forelse($bookmarkedPosts as $post)
+            @forelse($bookmarkedPosts as $i => $post)
+                @php
+                    $categoryBadgeSlug = $post->category->slug ?? '';
+                    $bgColorClass = 'bg-sky-500/80 text-white';
+                    if (Str::contains($categoryBadgeSlug, ['teknologi', 'komputer', 'it'])) $bgColorClass = 'bg-blue-500/80 text-white';
+                    elseif (Str::contains($categoryBadgeSlug, 'edukasi')) $bgColorClass = 'bg-green-500/80 text-white';
+                    elseif (Str::contains($categoryBadgeSlug, ['bisnis', 'pemasaran', 'karir'])) $bgColorClass = 'bg-yellow-500/80 text-black';
+                    elseif (Str::contains($categoryBadgeSlug, ['gaya-hidup', 'hobi'])) $bgColorClass = 'bg-pink-500/80 text-white';
+                    elseif (Str::contains($categoryBadgeSlug, ['olahraga', 'kesehatan'])) $bgColorClass = 'bg-red-500/80 text-white';
+                    elseif (Str::contains($categoryBadgeSlug, ['seni', 'desain', 'kreativitas'])) $bgColorClass = 'bg-purple-500/80 text-white';
+                    elseif (Str::contains($categoryBadgeSlug, 'bahasa')) $bgColorClass = 'bg-teal-500/80 text-white';
+                @endphp
                 <div class="forum-post bg-white/10 backdrop-blur-lg rounded-2xl p-7 transition-all duration-300 hover:bg-white/20 shadow-xl hover:shadow-2xl border border-white/10 hover:border-white/30 transform hover:-translate-y-2 hover:scale-[1.02] group">
                     <a href="{{ route('forum.show', $post->id) }}" class="block">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex-1 pr-4">
-                                <h2 class="text-xl font-bold text-white group-hover:text-purple-300 transition duration-200 leading-tight line-clamp-2">
-                                    {{ $post->title }}
-                                </h2>
-                            </div>
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white/70 mb-4">
+                            <span>Ditulis oleh <span class="font-semibold text-white">{{ $post->user->name }}</span></span>
+                            <span class="text-white/40">&middot;</span>
+                            <time datetime="{{ $post->created_at->toIso8601String() }}" class="italic">
+                                {{ $post->created_at->diffForHumans() }}
+                            </time>
                             @if($post->category)
-                                <span class="category-badge text-xs px-3 py-1.5 rounded-full font-medium shadow-lg whitespace-nowrap {{ $bgColorClass }}">
+                                <span class="text-white/40">&middot;</span>
+                                <span class="inline-block {{ $bgColorClass }} text-xs font-semibold px-3 py-1 rounded-full">
                                     {{ $post->category->name }}
                                 </span>
                             @endif
                         </div>
-
-                        <div class="flex items-center gap-3 mb-4 text-sm text-white/70">
-                            <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-semibold text-xs">
-                                    {{ substr($post->user->name, 0, 1) }}
-                                </div>
-                                <span class="font-medium text-white/90">{{ $post->user->name }}</span>
-                            </div>
-                            <span class="text-white/40">•</span>
-                            <span class="italic text-white/60">{{ $post->created_at->diffForHumans() }}</span>
-                        </div>
-
+                        <h2 class="text-xl font-bold text-white group-hover:text-purple-300 transition duration-200 leading-tight line-clamp-2 mb-2">
+                            {{ $post->title }}
+                        </h2>
                         <p class="text-white/70 text-sm line-clamp-3 leading-relaxed mb-4">
                             {{ Str::limit(strip_tags($post->content), 150) }}
                         </p>
-
-                        <div class="flex justify-between items-center">
+                        <div class="flex items-center justify-between mt-4">
                             <div class="flex items-center gap-4 text-xs text-white/60">
                                 <span class="flex items-center gap-1">
-                                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd" />
-                                    </svg>
+                                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd" /></svg>
                                     {{ $post->comments_count }} balasan
                                 </span>
+                                <span class="flex items-center gap-1">
+                                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" /></svg>
+                                    {{ $post->views_count ?? 0 }} views
+                                </span>
                             </div>
-                            <button onclick="removeBookmark('{{ $post->id }}')" class="text-white/60 hover:text-red-400 transition-colors duration-200">
+                            <button onclick="removeBookmark('{{ $post->id }}')" class="text-white/60 hover:text-red-400 transition-colors duration-200" title="Hapus Bookmark">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
                                 </svg>
