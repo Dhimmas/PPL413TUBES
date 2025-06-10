@@ -3,6 +3,7 @@
     <div class="container mx-auto p-4 max-w-3xl bg-gray-900 text-white rounded-lg shadow-xl mt-8">
         <h1 class="text-3xl font-bold text-center mb-6">{{ $quiz->title }}</h1>
 
+        
         {{-- Timer Section --}}
         @if ($quiz->time_limit_per_quiz)
             <div class="bg-gray-800 p-4 rounded-lg mb-6 text-center">
@@ -35,7 +36,7 @@
                         <div class="h-4 bg-gray-700 rounded w-1/2 mx-auto"></div>
                         <div class="h-4 bg-gray-700 rounded w-5/6 mx-auto"></div>
                     </div>
-                    
+
                 </div>
             </div>
             <div class="mt-6 text-center text-gray-400 text-sm">
