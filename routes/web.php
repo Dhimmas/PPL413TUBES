@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\Conversation;
 use App\Http\Controllers\TodoController;
+use App\Http\Controllers\TaskController;
 
 // Redirect root ke welcome
 Route::get('/', function () {
@@ -62,6 +63,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
     Route::put('/todos/{task}', [TodoController::class, 'update'])->name('todos.update');
     Route::delete('/todos/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
+    Route::put('/todos/status/{task}', [TodoController::class, 'updateStatus'])->name('todos.updateStatus');
+    Route::patch('/todos/completed/{task}', [TodoController::class, 'updateCompleted'])->name('todos.updateCompleted');
+    Route::delete('/todos/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
 
     // Quiz Route
     Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
@@ -75,6 +79,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/pomodoro', [PomodoroController::class, 'store'])->name('pomodoro.store');
 
 });
+
+
+Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+Route::post('/tasks', [TaskController::class, 'store']);
+Route::post('/tasks/{id}/status/{status}', [TaskController::class, 'updateStatus']);
 
 //Route Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
