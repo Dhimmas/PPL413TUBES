@@ -2,59 +2,52 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Models\UserQuizResult;
-use App\Models\UserProfile;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed', // Aktifkan jika menggunakan Laravel 10+
+    ];
+
+    // Relasi lainnya (tidak diubah)
+    public function forumPosts()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(ForumPost::class);
     }
 
-    public function profile()
+    public function comments()
     {
-        return $this->hasOne(Profile::class);
+        return $this->hasMany(Comment::class);
     }
-    
-    public function quizResults()
+
+    public function commentReactions()
     {
-        return $this->hasMany(UserQuizResult::class);
+        return $this->hasMany(CommentReaction::class);
+    }
+
+    // --- PERBAIKAN RELASI BOOKMARK ---
+    // Satu relasi bersih untuk semua post yang di-bookmark oleh user ini.
+    public function bookmarks()
+    {
+        return $this->belongsToMany(\App\Models\ForumPost::class, 'forum_bookmarks', 'user_id', 'forum_post_id')
+            ->withTimestamps();
     }
 }

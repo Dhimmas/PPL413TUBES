@@ -46,6 +46,12 @@
                                 <x-dropdown-link :href="route('forum.index')" class="text-gray-200 hover:bg-gray-700 hover:text-white">
                                     💬 Forum Diskusi
                                 </x-dropdown-link>
+                                <x-dropdown-link :href="route('pomodoro.index')" class="text-gray-200 hover:bg-gray-700 hover:text-white">
+                                    ⏱️ Pomodoro
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('forum.bookmarks.index')" class="text-gray-200 hover:bg-gray-700 hover:text-white">
+                                    📚 Bookmarks
+                                </x-dropdown-link>
                             </div>
                         </div>
                     </div>
@@ -129,7 +135,9 @@
                 ['📈', 'Progress', 'tasks.index'],
                 ['🤖', 'Chatbot', 'user.chatbot.index'],
                 ['🎓', 'Quiz', 'quiz.index'],
+                ['⏱️', 'Pomodoro', 'pomodoro.index'],
                 ['💬', 'Forum Diskusi', 'forum.index'],
+                ['📚', 'Bookmarks', 'forum.bookmarks.index'],
             ] as [$icon, $label, $routeName])
                 <x-responsive-nav-link :href="route($routeName)" :active="request()->routeIs($routeName)" class="flex items-center space-x-3 text-white hover:text-blue-300">
                     <span class="text-xl">{{ $icon }}</span>

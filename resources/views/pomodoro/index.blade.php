@@ -1,435 +1,435 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Timer</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<x-app-layout>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pomodoro Timer</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #2c3e50;
-            color: white;
-            min-height: 100vh;
-            padding: 20px;
-        }
+            /* Hapus padding/margin top di body, biar tidak dobel dengan layout */
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #2c3e50;
+                color: white;
+                min-height: 100vh;
+            }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
+            /* Tambahkan padding-top pada .container agar tidak tertutup navbar */
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 40px 20px 20px 20px;
+                padding-top: 6rem; /* <--- ruang untuk navbar fixed */
+            }
 
-        /* Header Section */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+            /* Header Section */
+            .header {
+                text-align: center;
+                margin-bottom: 40px;
+            }
 
-        .header-icon {
-            display: inline-block;
-            background: linear-gradient(135deg, #3498db, #8e44ad);
-            padding: 20px;
-            border-radius: 50%;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
-        }
+            .header-icon {
+                display: inline-block;
+                background: linear-gradient(135deg, #3498db, #8e44ad);
+                padding: 20px;
+                border-radius: 50%;
+                margin-bottom: 20px;
+                box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
+            }
 
-        .header-icon svg {
-            width: 48px;
-            height: 48px;
-            stroke: white;
-            stroke-width: 2;
-            fill: none;
-        }
+            .header-icon svg {
+                width: 48px;
+                height: 48px;
+                stroke: white;
+                stroke-width: 2;
+                fill: none;
+            }
 
-        .main-title {
-            font-size: 3rem;
-            font-weight: 900;
-            color: white;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-        }
-
-        /* Form Section */
-        .form-section {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 40px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .form-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            padding: 12px 16px;
-            color: white;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        textarea.form-input {
-            resize: none;
-            height: 80px;
-        }
-
-        /* Timer Section */
-        .timer-section {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .timer-display {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 30px;
-            padding: 40px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .timer-time {
-            font-size: 5rem;
-            font-family: 'Poppins', monospace;
-            font-weight: 900;
-            color: white;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-
-        .session-info {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .session-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #7f8c8d;
-            transition: all 0.3s ease;
-        }
-
-        .session-indicator.active {
-            background: #3498db;
-            animation: pulse 2s infinite;
-        }
-
-        .session-indicator.break {
-            background: #27ae60;
-        }
-
-        .session-type {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #3498db;
-        }
-
-        .status-info {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
-            min-height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Control Buttons */
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 15px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn-start {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-        }
-
-        .btn-stop {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-        }
-
-        .btn-complete {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-        }
-
-        .btn-reset {
-            background: linear-gradient(135deg, #7f8c8d, #95a5a6);
-        }
-
-        /* Break Buttons */
-        .break-section {
-            margin-bottom: 40px;
-        }
-
-        .break-title {
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .break-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-break {
-            background: rgba(155, 89, 182, 0.2);
-            border: 1px solid rgba(155, 89, 182, 0.4);
-            color: #bb8fce;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-break:hover {
-            background: rgba(155, 89, 182, 0.4);
-            transform: scale(1.05);
-        }
-
-        /* History Section */
-        .history-section {
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 30px;
-        }
-
-        .history-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .history-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .history-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .history-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 15px;
-        }
-
-        .history-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex: 1;
-        }
-
-        .history-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .history-icon.work {
-            background: linear-gradient(135deg, #3498db, #8e44ad);
-        }
-
-        .history-icon.break {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-        }
-
-        .history-details h4 {
-            font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .history-details p {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .history-meta {
-            text-align: right;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .history-duration {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 4px 8px;
-            border-radius: 8px;
-            margin-bottom: 5px;
-        }
-
-        .empty-history {
-            text-align: center;
-            padding: 40px;
-            color: rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-        }
-
-        /* Custom Scrollbar */
-        .history-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .history-list::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        .history-list::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, #3498db, #8e44ad);
-            border-radius: 10px;
-        }
-
-        /* Animations */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
             .main-title {
-                font-size: 2.5rem;
+                font-size: 3rem;
+                font-weight: 900;
+                color: white;
+                margin-bottom: 10px;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+                color: rgba(255, 255, 255, 0.8);
+                font-weight: 500;
+            }
+
+            /* Form Section */
+            .form-section {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 30px;
+                border-radius: 20px;
+                margin-bottom: 40px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-label {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-weight: 700;
+                margin-bottom: 8px;
+                color: rgba(255, 255, 255, 0.9);
+            }
+
+            .form-input {
+                width: 100%;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 12px;
+                padding: 12px 16px;
+                color: white;
+                font-size: 14px;
+                transition: all 0.3s ease;
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: #3498db;
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+                background: rgba(255, 255, 255, 0.15);
+            }
+
+            .form-input::placeholder {
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+            textarea.form-input {
+                resize: none;
+                height: 80px;
+            }
+
+            /* Timer Section */
+            .timer-section {
+                text-align: center;
+                margin-bottom: 40px;
+            }
+
+            .timer-display {
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 30px;
+                padding: 40px;
+                margin-bottom: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
             }
 
             .timer-time {
-                font-size: 4rem;
+                font-size: 5rem;
+                font-family: 'Poppins', monospace;
+                font-weight: 900;
+                color: white;
+                margin-bottom: 15px;
+                letter-spacing: 2px;
             }
 
-            .controls {
-                flex-direction: column;
+            .session-info {
+                display: flex;
                 align-items: center;
+                justify-content: center;
+                gap: 10px;
+                margin-bottom: 15px;
             }
 
-            .btn {
-                width: 200px;
+            .session-indicator {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #7f8c8d;
+                transition: all 0.3s ease;
+            }
+
+            .session-indicator.active {
+                background: #3498db;
+                animation: pulse 2s infinite;
+            }
+
+            .session-indicator.break {
+                background: #27ae60;
+            }
+
+            .session-type {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #3498db;
+            }
+
+            .status-info {
+                background: rgba(255, 255, 255, 0.05);
+                padding: 12px 20px;
+                border-radius: 12px;
+                font-size: 14px;
+                color: rgba(255, 255, 255, 0.8);
+                min-height: 45px;
+                display: flex;
+                align-items: center;
                 justify-content: center;
             }
 
-            .history-content {
-                flex-direction: column;
+            /* Control Buttons */
+            .controls {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                margin-bottom: 40px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                border: none;
+                border-radius: 15px;
+                font-weight: 700;
+                font-size: 14px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                color: white;
+            }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            }
+
+            .btn-start {
+                background: linear-gradient(135deg, #27ae60, #2ecc71);
+            }
+
+            .btn-stop {
+                background: linear-gradient(135deg, #f39c12, #e67e22);
+            }
+
+            .btn-complete {
+                background: linear-gradient(135deg, #3498db, #2980b9);
+            }
+
+            .btn-reset {
+                background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+            }
+
+            /* Break Buttons */
+            .break-section {
+                margin-bottom: 40px;
+            }
+
+            .break-title {
+                text-align: center;
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 20px;
+                color: rgba(255, 255, 255, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 gap: 10px;
             }
 
+            .break-buttons {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .btn-break {
+                background: rgba(155, 89, 182, 0.2);
+                border: 1px solid rgba(155, 89, 182, 0.4);
+                color: #bb8fce;
+                padding: 8px 16px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-break:hover {
+                background: rgba(155, 89, 182, 0.4);
+                transform: scale(1.05);
+            }
+
+            /* History Section */
+            .history-section {
+                border-top: 1px solid rgba(255, 255, 255, 0.2);
+                padding-top: 30px;
+            }
+
+            .history-title {
+                font-size: 1.3rem;
+                font-weight: 700;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: rgba(255, 255, 255, 0.9);
+            }
+
+            .history-list {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+
+            .history-item {
+                background: rgba(255, 255, 255, 0.05);
+                padding: 20px;
+                border-radius: 15px;
+                margin-bottom: 15px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .history-item:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .history-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .history-info {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                flex: 1;
+            }
+
+            .history-icon {
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                font-weight: bold;
+            }
+
+            .history-icon.work {
+                background: linear-gradient(135deg, #3498db, #8e44ad);
+            }
+
+            .history-icon.break {
+                background: linear-gradient(135deg, #27ae60, #2ecc71);
+            }
+
+            .history-details h4 {
+                font-weight: 700;
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+
+            .history-details p {
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.6);
+            }
+
             .history-meta {
-                text-align: left;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px 10px;
+                text-align: right;
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.7);
             }
 
-            .main-title {
-                font-size: 2rem;
+            .history-duration {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 4px 8px;
+                border-radius: 8px;
+                margin-bottom: 5px;
             }
 
-            .timer-time {
-                font-size: 3rem;
+            .empty-history {
+                text-align: center;
+                padding: 40px;
+                color: rgba(255, 255, 255, 0.5);
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 15px;
             }
-        }
-    </style>
-</head>
-<body>
+
+            /* Custom Scrollbar */
+            .history-list::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .history-list::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+            }
+
+            .history-list::-webkit-scrollbar-thumb {
+                background: linear-gradient(to bottom, #3498db, #8e44ad);
+                border-radius: 10px;
+            }
+
+            /* Animations */
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.5; }
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .main-title {
+                    font-size: 2.5rem;
+                }
+
+                .timer-time {
+                    font-size: 4rem;
+                }
+
+                .controls {
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .btn {
+                    width: 200px;
+                    justify-content: center;
+                }
+
+                .history-content {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .history-meta {
+                    text-align: left;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .container {
+                    padding: 20px 10px;
+                }
+
+                .main-title {
+                    font-size: 2rem;
+                }
+
+                .timer-time {
+                    font-size: 3rem;
+                }
+            }
+        </style>
+    </head>
     <div class="container">
         <!-- Header -->
         <div class="header">
@@ -683,5 +683,4 @@
         updateDisplay();
         updateHistoryDisplay();
     </script>
-</body>
-</html>
+</x-app-layout>

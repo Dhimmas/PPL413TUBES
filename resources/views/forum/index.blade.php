@@ -90,7 +90,7 @@
                     <a href="{{ route('forum.show', $post->id) }}" class="block">
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex-1 pr-4">
-                                <h2 class="text-xl font-bold text-white group-hover:text-purple-300 transition duration-200 leading-tight line-clamp-2">
+                                <h2 class="text-xl font-bold text-white group-hover:text-purple-300 transition duration-200 leading-tighcategoryBadgeSlugt line-clamp-2">
                                     {{ $post->title }}
                                 </h2>
                             </div>

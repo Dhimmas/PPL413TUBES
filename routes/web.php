@@ -8,11 +8,14 @@ use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\UserQuizController;
 use App\Http\Controllers\PomodoroController;
+use App\Http\Controllers\CommentReactionController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\Conversation;
 use App\Http\Controllers\TodoController;
+use App\Http\Controllers\ForumBookmarkController;
 use App\Http\Controllers\TaskController;
+
 
 // Redirect root ke welcome
 Route::get('/', function () {
@@ -33,18 +36,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/goals', 'maintenance')->name('goals');
     Route::view('/progress', 'maintenance')->name('progress');
 
+    // --- GRUP ROUTE BOOKMARK YANG SUDAH DIPERBAIKI ---
+    Route::prefix('forum')->name('forum.')->middleware('auth')->group(function () {
+        // Halaman untuk melihat semua post yang di-bookmark
+        Route::get('/bookmarks', [ForumBookmarkController::class, 'index'])->name('bookmarks.index');
+        
+        // Route untuk toggle bookmark, menunjuk ke controller yang benar
+        Route::post('/{post}/bookmark', [ForumBookmarkController::class, 'toggle'])->name('bookmarks.toggle');
+    });
+
     // Halaman index forum
     Route::get('/forum', [ForumController::class, 'index'])->name('forum.index');
 
     // Route lainnya untuk CRUD forum
     Route::get('/forum/create', [ForumController::class, 'create'])->name('forum.create');
-    Route::post('/forum', [ForumController::class, 'store'])->name('forum.store'); // Perbaikan: Menggunakan '/forum' untuk store
+    Route::post('/forum', [ForumController::class, 'store'])->name('forum.store');
     Route::get('/forum/{id}', [ForumController::class, 'show'])->name('forum.show');
     Route::get('/forum/{id}/edit', [ForumController::class, 'edit'])->name('forum.edit');
     Route::put('/forum/{id}', [ForumController::class, 'update'])->name('forum.update');
     Route::delete('/forum/{id}', [ForumController::class, 'destroy'])->name('forum.destroy');
     Route::post('/forum/{post}/comment', [ForumController::class, 'storeComment'])->name('forum.comment.store');
-
+    Route::post('/comments/{comment}/reactions', [CommentReactionController::class, 'toggleReaction'])->middleware('auth');
+    Route::post('/forum/poll/option/{pollOption}/vote', [ForumController::class, 'handlePollVote'])->name('forum.poll.vote')->middleware('auth');
 
     // Profile routes
     Route::prefix('profile')->name('profile.')->group(function () {
@@ -56,7 +69,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Route Chatbot
-    //controller user
     Route::get('/chatbot', [ChatController::class, 'user_index'])->name('user.chatbot.index');
     Route::post('/chatbot', [ChatController::class, 'chat'])->name('chatbot.send_message');
     
@@ -71,7 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Quiz Route
     Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
-    Route::get('/quiz/{quiz}/attempt', [UserQuizController::class, 'attempt'])->name('quiz.attempt');
+    Route::get('/quiz/{quiz}/attempt', [UserQuizController::class, 'attempt'])->name('quiz.attempt'); 
     Route::post('/quiz/{quiz}/submit-answer', [UserQuizController::class, 'submitAnswer'])->name('quiz.attempt.submitAnswer');
     Route::post('/quiz/result/{result}/finalize', [UserQuizController::class, 'finalizeQuiz'])->name('quiz.finalize');
     Route::get('/quiz/{quiz}/get-question/{questionNumber}', [UserQuizController::class, 'getQuestionByNumber'])->name('quiz.getQuestion');
@@ -84,6 +96,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
     Route::post('/tasks', [TaskController::class, 'store']);
     Route::post('/tasks/{id}/status/{status}', [TaskController::class, 'updateStatus']);
+
 });
 
 
@@ -105,8 +118,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::put('/chatbot/{id}', [ChatController::class, 'update'])->name('chatbot.update');
 });
 
-    Route::fallback(function () {
+Route::fallback(function () {
     return view('404page');
-    });
+});
+
 // Autentikasi
 require __DIR__.'/auth.php';
