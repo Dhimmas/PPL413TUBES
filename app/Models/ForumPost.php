@@ -4,62 +4,85 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-// use App\Models\ForumCategory; // Tidak perlu di-import jika sudah namespaced dengan benar dan hanya digunakan di method return type
-// use App\Models\User; // Tidak perlu di-import jika sudah namespaced dengan benar dan hanya digunakan di method return type
-// use App\Models\Comment; // Tidak perlu di-import jika sudah namespaced dengan benar dan hanya digunakan di method return type
+use Illuminate\Support\Facades\Auth; // <-- TAMBAHKAN INI
 
 class ForumPost extends Model
 {
     use HasFactory;
 
-    /**
-     * Atribut yang dapat diisi secara massal.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'title',
         'content',
         'user_id',
         'forum_category_id',
         'image',
-        // 'slug', // Tambahkan jika Anda menggunakan slug untuk postingan
-        // 'views_count' // Tambahkan jika Anda memiliki kolom untuk jumlah views
+        'views_count'
     ];
 
-    /**
-     * Mendapatkan pengguna yang membuat postingan ini.
-     */
+    // --- PROPERTI BARU UNTUK EFISIENSI ---
+    // Menambahkan $with untuk selalu eager load relasi ini,
+    // Ini akan mencegah N+1 problem saat mengecek status bookmark.
+    protected $with = ['bookmarkingUsers'];
+
+    // --- ACCESSOR BARU UNTUK VIEW ---
+    // Ini cara modern dan bersih untuk mengecek status bookmark di view
+    // Kita bisa memanggilnya dengan $post->is_bookmarked
+    public function getIsBookmarkedAttribute()
+    {
+        // Jika user tidak login, tidak ada yang di-bookmark
+        if (!Auth::check()) {
+            return false;
+        }
+        
+        // Cek apakah ID user yang sedang login ada di dalam koleksi user yang mem-bookmark post ini.
+        // Ini sangat cepat karena relasi 'bookmarkingUsers' sudah di-load berkat $with.
+        return $this->bookmarkingUsers->contains(Auth::id());
+    }
+
+    public function bookmarkedUsers()
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'forum_bookmarks', 'forum_post_id', 'user_id')
+            ->withTimestamps();
+    }
+
+    public function isBookmarkedBy($user)
+    {
+        if (!$user) return false;
+        return $this->bookmarkedUsers()->where('user_id', $user->id)->exists();
+    }
+
+    // Relasi lainnya (tidak diubah)
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Mendapatkan kategori dari postingan forum ini.
-     */
     public function category()
     {
         return $this->belongsTo(ForumCategory::class, 'forum_category_id');
     }
 
-    /**
-     * Mendapatkan komentar untuk postingan forum ini.
-     */
     public function comments()
     {
         return $this->hasMany(Comment::class, 'forum_post_id');
     }
+    
+    public function poll()
+    {
+        return $this->hasOne(Poll::class);
+    }
 
-    // Accessor untuk mendapatkan ringkasan konten (opsional, bisa juga di view)
-    // public function getExcerptAttribute()
-    // {
-    //     return Str::limit(strip_tags($this->content), 150);
-    // }
-
-    // Accessor untuk tanggal yang mudah dibaca (opsional, bisa juga di view dengan $post->created_at->diffForHumans())
-    // public function getPublishedDateAttribute()
-    // {
-    //     return $this->created_at->diffForHumans();
-    // }
+    public function incrementViews()
+    {
+        $this->views_count++;
+        return $this->save();
+    }
+    
+    // --- PERBAIKAN RELASI BOOKMARK ---
+    // Satu relasi bersih untuk semua user yang mem-bookmark post ini.
+    public function bookmarkingUsers()
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'forum_bookmarks', 'forum_post_id', 'user_id')
+                    ->withTimestamps();
+    }
 }
