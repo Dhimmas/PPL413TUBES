@@ -35,6 +35,7 @@
                         <div class="h-4 bg-gray-700 rounded w-1/2 mx-auto"></div>
                         <div class="h-4 bg-gray-700 rounded w-5/6 mx-auto"></div>
                     </div>
+                    
                 </div>
             </div>
             <div class="mt-6 text-center text-gray-400 text-sm">
