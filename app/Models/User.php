@@ -50,4 +50,10 @@ class User extends Authenticatable
         return $this->belongsToMany(\App\Models\ForumPost::class, 'forum_bookmarks', 'user_id', 'forum_post_id')
             ->withTimestamps();
     }
+
+    public function bookmarkedPosts()
+    {
+        return $this->belongsToMany(\App\Models\ForumPost::class, 'forum_bookmarks', 'user_id', 'forum_post_id')
+            ->withTimestamps();
+    }
 }
