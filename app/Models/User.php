@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+
+use App\Models\UserQuizResult;
+use App\Models\UserProfile;
+
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -45,4 +50,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+    
+    public function quizResults()
+    {
+        return $this->hasMany(UserQuizResult::class);
+    }
+
 }
