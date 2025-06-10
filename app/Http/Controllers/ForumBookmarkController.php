@@ -16,7 +16,8 @@ class ForumBookmarkController extends Controller
         // Menggunakan relasi yang sudah diperbaiki
         $bookmarkedPosts = Auth::user()
             ->bookmarkedPosts() // <-- Relasi yang bersih
-            ->with(['user', 'category', 'comments']) // Eager load relasi lain untuk performa
+            ->with(['user', 'category']) // Eager load relasi lain untuk performa
+            ->withCount('comments') // Menghitung jumlah komentar
             ->latest('forum_bookmarks.created_at') // Urutkan berdasarkan kapan di-bookmark
             ->paginate(10);
             
