@@ -63,15 +63,24 @@
     </style>
 </head>
 <body class="bg-dark-900 text-gray-200 min-h-screen">
-        <div class="container mx-auto px-4 py-8 max-w-4xl">
-            <div class="bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl p-8 mb-8 text-center transform hover:-translate-y-1 transition-transform duration-300">
-                <h1 class="text-4xl font-extrabold text-white mb-2">Hasil Quiz: <span class="text-purple-400">{{ $result->quiz->title }}</span></h1>
-                <p class="mt-4 text-gray-300">
-                    <i class="far fa-calendar mr-2"></i> 
-                    {{ $result->created_at->format('d M Y H:i') }}
-                </p>
-            </div>
+    @php
+        $totalQuestions = $result->answers->count();
+        $correctAnswers = $result->score;
+        $wrongAnswers = $totalQuestions - $correctAnswers;
+        $percentage = $totalQuestions > 0 ? ($correctAnswers / $totalQuestions) * 100 : 0;
+        $progress = $totalQuestions > 0 ? ($correctAnswers / $totalQuestions) * 283 : 0;
+    @endphp
 
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl p-8 mb-8 text-center transform hover:-translate-y-1 transition-transform duration-300">
+            <h1 class="text-4xl font-extrabold text-white mb-2">Hasil Quiz: <span class="text-purple-400">{{ $result->quiz->title }}</span></h1>
+            <p class="mt-4 text-gray-300">
+                <i class="far fa-calendar mr-2"></i> 
+                {{ $result->created_at->format('d M Y H:i') }}
+            </p>
+        </div>
+
+        @if($totalQuestions > 0)
             <!-- Score Summary -->
             <div class="bg-dark-800 rounded-xl shadow-xl overflow-hidden mb-8 card-hover fade-in">
                 <div class="p-6">
@@ -91,12 +100,12 @@
                                     <circle cx="50" cy="50" r="45" fill="none" 
                                         class="score-circle-progress"
                                         stroke-width="8" 
-                                        stroke-dasharray="{{ $progress = ($result->score / $result->answers->count()) * 283 }} 283" 
+                                        stroke-dasharray="{{ $progress }} 283" 
                                         stroke-linecap="round" 
                                         transform="rotate(-90 50 50)" />
                                 </svg>
                                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span class="text-3xl font-bold text-white">{{ $result->score }}/{{ $result->answers->count() }}</span>
+                                    <span class="text-3xl font-bold text-white">{{ $correctAnswers }}/{{ $totalQuestions }}</span>
                                     <span class="text-gray-400 mt-1">Skor</span>
                                 </div>
                             </div>
@@ -106,19 +115,19 @@
                     <!-- Stats -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                         <div class="bg-dark-700 p-4 rounded-lg text-center card-hover">
-                            <div class="text-2xl font-bold text-green-400">{{ $result->score }}</div>
+                            <div class="text-2xl font-bold text-green-400">{{ $correctAnswers }}</div>
                             <div class="text-gray-400">Jawaban Benar</div>
                         </div>
                         <div class="bg-dark-700 p-4 rounded-lg text-center card-hover">
-                            <div class="text-2xl font-bold text-red-400">{{ $result->answers->count() - $result->score }}</div>
+                            <div class="text-2xl font-bold text-red-400">{{ $wrongAnswers }}</div>
                             <div class="text-gray-400">Jawaban Salah</div>
                         </div>
                         <div class="bg-dark-700 p-4 rounded-lg text-center card-hover">
-                            <div class="text-2xl font-bold text-white">{{ $result->answers->count() }}</div>
+                            <div class="text-2xl font-bold text-white">{{ $totalQuestions }}</div>
                             <div class="text-gray-400">Total Pertanyaan</div>
                         </div>
                         <div class="bg-dark-700 p-4 rounded-lg text-center card-hover">
-                            <div class="text-2xl font-bold text-primary-500">{{ number_format(($result->score / $result->answers->count()) * 100, 1) }}%</div>
+                            <div class="text-2xl font-bold text-primary-500">{{ number_format($percentage, 1) }}%</div>
                             <div class="text-gray-400">Persentase</div>
                         </div>
                     </div>
@@ -137,10 +146,14 @@
                             <i class="fas fa-lightbulb text-2xl"></i>
                         </div>
                         <div>
-                            @if(($result->score / $result->answers->count()) >= 0.8)
+                            @php
+                                $performanceRatio = $percentage / 100;
+                            @endphp
+                            
+                            @if($performanceRatio >= 0.8)
                                 <p class="font-bold text-green-400 text-lg">Luar Biasa! <i class="fas fa-star ml-1 text-yellow-400"></i></p>
                                 <p class="text-gray-300 mt-3">Kamu menguasai materi ini dengan sangat baik! Hasil ini menunjukkan pemahaman yang mendalam tentang topik yang diujikan. Pertahankan semangat belajarmu dan teruslah mengasah kemampuanmu.</p>
-                            @elseif(($result->score / $result->answers->count()) >= 0.6)
+                            @elseif($performanceRatio >= 0.6)
                                 <p class="font-bold text-primary-500 text-lg">Bagus! <i class="fas fa-thumbs-up ml-1"></i></p>
                                 <p class="text-gray-300 mt-3">Hasil yang cukup baik! Kamu sudah memahami sebagian besar materi, tetapi masih ada beberapa area yang bisa ditingkatkan. Tinjau kembali materi yang sulit dan coba quiz lagi untuk hasil yang lebih baik.</p>
                             @else
@@ -220,7 +233,7 @@
                 <a href="{{ route('quiz.index') }}" class="flex-1 bg-dark-700 hover:bg-dark-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg text-center transition duration-300 flex items-center justify-center card-hover">
                     <i class="fas fa-arrow-left mr-3"></i> Kembali ke Daftar Quiz
                 </a>
-                @if(($result->score / $result->answers->count()) < 0.8)
+                @if($performanceRatio < 0.8)
                 <a href="{{ route('quiz.attempt', $result->quiz->id) }}" class="flex-1 bg-gradient-to-r from-primary-600 to-purple-600 hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg shadow-lg text-center transition duration-300 flex items-center justify-center card-hover">
                     <i class="fas fa-redo mr-3"></i> Coba Lagi
                 </a>
@@ -229,14 +242,31 @@
                     <i class="fas fa-download mr-3"></i> Download Hasil
                 </a>
             </div>
-            
-            <!-- Footer -->
-            <div class="text-center text-gray-500 text-sm mt-12 pb-6">
-                <p class="mt-2">
-                    <i class="fas fa-shield-alt mr-2"></i> 
-                    Hasil quiz ini bersifat pribadi dan hanya dapat diakses oleh kamu
-                </p>
+        @else
+            <!-- No Questions/Answers Found -->
+            <div class="bg-dark-800 rounded-xl shadow-xl overflow-hidden mb-8 card-hover fade-in">
+                <div class="p-8 text-center">
+                    <i class="fas fa-exclamation-triangle text-yellow-400 text-6xl mb-4"></i>
+                    <h2 class="text-2xl font-bold text-white mb-4">Tidak Ada Data Quiz</h2>
+                    <p class="text-gray-400 mb-6">Quiz ini belum memiliki jawaban yang tercatat.</p>
+                    <div class="flex flex-col sm:flex-row justify-between gap-4 mb-8 fade-in">
+                        <a href="{{ route('quiz.index') }}" class="flex-1 bg-dark-700 hover:bg-dark-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg text-center transition duration-300 flex items-center justify-center card-hover">
+                            <i class="fas fa-arrow-left mr-3"></i> Kembali ke Daftar Quiz
+                        </a>
+                        <a href="{{ route('quiz.attempt', $result->quiz->id) }}" class="flex-1 bg-gradient-to-r from-primary-600 to-purple-600 hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg shadow-lg text-center transition duration-300 flex items-center justify-center card-hover">
+                            <i class="fas fa-redo mr-3"></i> Coba Lagi
+                        </a>
+                    </div>
+                </div>
             </div>
+        @endif
+        
+        <!-- Footer -->
+        <div class="text-center text-gray-500 text-sm mt-12 pb-6">
+            <p class="mt-2">
+                <i class="fas fa-shield-alt mr-2"></i> 
+                Hasil quiz ini bersifat pribadi dan hanya dapat diakses oleh kamu
+            </p>
         </div>
     </div>
 </body>

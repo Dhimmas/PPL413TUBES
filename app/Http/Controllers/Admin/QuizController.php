@@ -76,7 +76,7 @@ class QuizController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'nullable|exists:categories,id',
             'new_category' => 'nullable|string|max:255|unique:categories,name',
-            'time_limit_per_quiz' => 'nullable|integer|min:1' // Validasi ini sudah benar
+            'time_limit_per_quiz' => 'nullable|integer|min:1'
         ]);
 
         // Handle kategori baru
