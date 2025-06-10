@@ -1,0 +1,22 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-wNjmbwsL.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BZmirWUx.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/app-DvB2Xm2x.css"
+    ]
+  },
+  "resources/js/quiz_attempt.js": {
+    "file": "assets/quiz_attempt-BNjBY8EM.js",
+    "name": "quiz_attempt",
+    "src": "resources/js/quiz_attempt.js",
+    "isEntry": true
+  }
+}

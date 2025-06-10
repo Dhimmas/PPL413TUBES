@@ -6,6 +6,7 @@ use App\Models\Quiz;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class QuestionController extends Controller
 {
@@ -31,12 +32,14 @@ class QuestionController extends Controller
                 'options' => 'nullable|array',
                 'options.*' => 'nullable|string',
                 'correct_answer' => 'nullable|string',
+                'time_limit_per_question' => 'nullable|integer|min:0'
             ])->validate();
 
             $data = [
                 'quiz_id' => $quiz->id,
                 'question_type' => $questionData['question_type'],
                 'question_text' => $questionData['question_text'] ?? null,
+                'time_limit_per_question' => $questionData['time_limit_per_question'] ?? null,
             ];
 
             // Tangani file soal (jika ada)
@@ -78,13 +81,22 @@ class QuestionController extends Controller
             Question::create($data);
         }
 
+        if ($quiz->time_limit_per_quiz === null) {
+            $totalTimeFromQuestions = $quiz->questions->sum('time_limit_per_question');
+            $quiz->update(['time_limit_per_quiz' => $totalTimeFromQuestions]);
+        }
         return redirect()->route('admin.quiz.index')->with('success', 'Semua soal berhasil ditambahkan!');
     }
     public function Destroy(string $id)
     {
         $questions = Question::findOrFail($id);
+        $quiz = $question->quiz;
         $questions -> delete();
-        
+
+        if ($quiz->time_limit_per_quiz === null) {
+            $totalTimeFromQuestions = $quiz->questions->sum('time_limit_per_question');
+            $quiz->update(['time_limit_per_quiz' => $totalTimeFromQuestions]);
+        }
         return redirect()->route('admin.quiz.index')->with('success', 'Soal berhasil dihapus!');
     }
 }
