@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use App\Models\Conversation;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\ForumBookmarkController;
+use App\Http\Controllers\TaskController;
+
 
 // Redirect root ke welcome
 Route::get('/', function () {
@@ -57,12 +59,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/comments/{comment}/reactions', [CommentReactionController::class, 'toggleReaction'])->middleware('auth');
     Route::post('/forum/poll/option/{pollOption}/vote', [ForumController::class, 'handlePollVote'])->name('forum.poll.vote')->middleware('auth');
 
-    // Profile
-    Route::middleware('auth')->group(function () {
-        Route::post('/profile', [ProfileController::class, 'store'])->name('profile.add');
-        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Profile routes
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'show'])->name('show');
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::post('/', [ProfileController::class, 'store'])->name('add');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
     });
 
     // Route Chatbot
@@ -74,18 +77,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
     Route::put('/todos/{task}', [TodoController::class, 'update'])->name('todos.update');
     Route::delete('/todos/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
+    Route::put('/todos/status/{task}', [TodoController::class, 'updateStatus'])->name('todos.updateStatus');
+    Route::patch('/todos/completed/{task}', [TodoController::class, 'updateCompleted'])->name('todos.updateCompleted');
+    Route::delete('/todos/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
 
     // Quiz Route
     Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
-    Route::get('/quiz/{quiz}/attempt', [UserQuizController::class, 'attempt'])->name('quiz.attempt');
-    Route::post('/quiz/{quiz}/attempt', [UserQuizController::class, 'submit'])->name('quiz.attempt.store');
-    Route::post('/quiz/result', [QuizController::class, 'result'])->name('quiz.result');
+    Route::get('/quiz/{quiz}/attempt', [UserQuizController::class, 'attempt'])->name('quiz.attempt'); 
+    Route::post('/quiz/{quiz}/submit-answer', [UserQuizController::class, 'submitAnswer'])->name('quiz.attempt.submitAnswer');
+    Route::post('/quiz/result/{result}/finalize', [UserQuizController::class, 'finalizeQuiz'])->name('quiz.finalize');
+    Route::get('/quiz/{quiz}/get-question/{questionNumber}', [UserQuizController::class, 'getQuestionByNumber'])->name('quiz.getQuestion');
     Route::get('/quiz/{quiz}/result', [UserQuizController::class, 'result'])->name('quiz.result');
-    
-    // Pomodoro Route
+
     Route::get('/pomodoro', [PomodoroController::class, 'index'])->name('pomodoro.index');
     Route::post('/pomodoro', [PomodoroController::class, 'store'])->name('pomodoro.store');
-    
+
+
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('/tasks', [TaskController::class, 'store']);
+    Route::post('/tasks/{id}/status/{status}', [TaskController::class, 'updateStatus']);
+
 });
 
 

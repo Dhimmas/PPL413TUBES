@@ -30,10 +30,7 @@
                 @endif
                 
                 <div class="mt-2 flex space-x-2">
-                    <button class="text-sm text-blue-600 hover:text-blue-800 edit-task" 
-                            data-task-id="{{ $task->id }}">
-                        Edit
-                    </button>
+                    
                     <button class="text-sm text-red-600 hover:text-red-800 delete-task" 
                             data-task-id="{{ $task->id }}">
                         Hapus

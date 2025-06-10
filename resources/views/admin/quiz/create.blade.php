@@ -34,6 +34,10 @@
                 </select>
             </div>
         </div>
+        <div class="mb-4">
+            <label class="block mb-1">Total Waktu Quiz (Menit, kosongkan jika dihitung dari soal)</label>
+            <input type="number" name="time_limit_per_quiz" class="w-full p-2 rounded text-black" placeholder="Cth: 60 (menit)">
+        </div>
         
         {{-- Tombol submit --}}
         <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">

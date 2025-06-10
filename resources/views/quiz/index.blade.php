@@ -118,15 +118,24 @@
 
                         {{-- Action Buttons --}}
                         <div class="flex flex-col gap-3">
-                            @if(in_array($quiz->id, $UserQuizResults))
-                                <a href="{{ route('quiz.result', $quiz->id) }}" class="flex-1 bg-green-500 hover:bg-green-600 text-white text-center py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg">
-                                    Lihat Hasil
-                                </a>
-                            @else
-                                <a href="{{ route('quiz.attempt', $quiz->id) }}" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white text-center py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg transform hover:scale-105">
-                                    Mulai Quiz
-                                </a>
-                            @endif
+                        @if(isset($userQuizStatuses[$quiz->id]) && $userQuizStatuses[$quiz->id] == 'in_progress')
+                            {{-- Jika statusnya in_progress, tampilkan "Lanjutkan Quiz" --}}
+                            <a href="{{ route('quiz.attempt', $quiz->id) }}" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-center py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg transform hover:scale-105">
+                                Lanjutkan Quiz
+                            </a>
+
+                        @elseif(isset($userQuizStatuses[$quiz->id]) && $userQuizStatuses[$quiz->id] == 'completed')
+                            {{-- Jika statusnya completed, tampilkan "Lihat Hasil" --}}
+                            <a href="{{ route('quiz.result', $quiz->id) }}" class="flex-1 bg-green-500 hover:bg-green-600 text-white text-center py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg">
+                                Lihat Hasil
+                            </a>
+
+                        @else
+                            {{-- Jika belum pernah dikerjakan, tampilkan "Mulai Quiz" --}}
+                            <a href="{{ route('quiz.attempt', $quiz->id) }}" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white text-center py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg transform hover:scale-105">
+                                Mulai Quiz
+                            </a>
+                        @endif
 
                             @auth
                                 @if(auth()->user()->is_admin)

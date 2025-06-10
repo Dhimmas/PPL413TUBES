@@ -1,14 +1,14 @@
 <x-app-layout>
 
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-6">Schedule</h1>
+    <h1 class="text-2xl font-bold mb-6 text-white">Schedule</h1>
     
     <!-- Kalender -->
     @include('todos.partials.schedule')
     
     <!-- Daftar Tugas -->
     <div class="mt-8">
-        <h2 class="text-xl font-semibold mb-4">Tasks</h2>
+        <h2 class="text-xl font-semibold mb-4 text-white">Tasks</h2>
         <div class="bg-white rounded-lg shadow p-6">
             @include('todos.partials.task-list')
             

@@ -26,6 +26,10 @@ class TodoController extends Controller
         
         // Generate data kalender
         $calendar = $this->generateCalendar($selectedDate);
+
+        $completedCount = $tasks->where('completed', true)->count();
+        $totalCount = $tasks->count();
+        $progress = $totalCount > 0 ? round(($completedCount / $totalCount) * 100) : 0;
         
         return view('todos.index', [
             'tasks' => Task::all(),
