@@ -12,34 +12,18 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    public function store(Request $request)
+    /**
+     * Display the user's profile.
+     */
+    public function show(Request $request): View
     {
-        $request->validate([
-            'gender' => 'required',
-            'tanggal_lahir' => 'required|date',
-            'phone' => 'required|string',
-            'bio' => 'nullable|string',
-            'profile_picture' => 'nullable|image|max:2048',
-        ]);
-
-        $data = $request->all();
-        $data['user_id'] = auth()->id(); // penting
-
-        // Handle upload profile picture (jika ada)
-        if ($request->hasFile('profile_picture')) {
-            $file = $request->file('profile_picture');
+        $user = $request->user();
+        $profile = $user->profile ?? (object)['profile_picture' => '/images/default-avatar.png'];
         
-            if ($file->isValid()) {
-                $path = $file->store('profile_pictures', 'public'); // Simpan gambar di folder 'public/profile_pictures'
-                $data['profile_picture'] = $path; // Simpan path gambar
-            } else {
-                return back()->withErrors(['profile_picture' => 'File upload gagal, file tidak valid.']);
-            }
-        }
-        // Simpan profile baru
-        Profile::create($data);
-
-        return back()->with('status', 'profile-detail-updated');
+        return view('profile.show', [
+            'user' => $user,
+            'profile' => $profile,
+        ]);
     }
 
     /**
@@ -47,10 +31,36 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $profile = $user->profile ?? (object)['profile_picture' => '/images/default-avatar.png'];
+        
         return view('profile.edit', [
-            'user' => $request->user(),
-            'profile' => Profile::findOrFail($request->user()->id)
+            'user' => $user,
+            'profile' => $profile,
         ]);
+    }
+
+    /**
+     * Store a new profile.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $request->user()->id],
+            'profile_picture' => ['nullable', 'image', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+        
+        if ($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $validated['profile_picture'] = $path;
+        }
+
+        $user->update($validated);
+        
+        return Redirect::route('profile.show')->with('status', 'profile-created');
     }
 
     /**
@@ -58,35 +68,13 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = $request->user();
+        $request->user()->fill($request->validated());
 
-        // Update data dari tabel users
-        $user->fill($request->only(['name', 'email']));
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-        $user->save();
-
-        // Update atau create data dari tabel profiles
-        $dataProfile = $request->only(['tanggal_lahir', 'gender', 'phone', 'bio']);
-
-        // Handle upload profile picture (jika ada)
-        if ($request->hasFile('profile_picture')) {
-            $file = $request->file('profile_picture');
-        
-            if ($file->isValid()) {
-                $path = $file->store('profile_pictures', 'public');
-                $dataProfile['profile_picture'] = $path;
-            } else {
-                return back()->withErrors(['profile_picture' => 'File upload gagal, file tidak valid.']);
-            }
-        } else {
-            // Jangan menimpa field profile_picture jika tidak ada file baru
-            unset($dataProfile['profile_picture']);
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
         }
 
-        // Update atau create data profil pengguna
-        $user->profile()->updateOrCreate(['user_id' => $user->id], $dataProfile);
+        $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

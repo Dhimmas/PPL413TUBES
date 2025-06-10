@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up()
 {
-    Schema::create('tasks', function (Blueprint $table) {
+    Schema::create('task', function (Blueprint $table) {
         $table->id();
         $table->string('task_name');
         $table->string('status')->default('Not Started'); // Status: Not Started, On Progress, Finished

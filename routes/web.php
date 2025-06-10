@@ -46,12 +46,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/forum/{post}/comment', [ForumController::class, 'storeComment'])->name('forum.comment.store');
 
 
-    // Profile
-
-    Route::post('/profile', [ProfileController::class, 'store'])->name('profile.add');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Profile routes
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'show'])->name('show');
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::post('/', [ProfileController::class, 'store'])->name('add');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    });
 
     // Route Chatbot
     //controller user
