@@ -168,7 +168,7 @@
               <p><strong>Bot/Admin:</strong> {{ $conversation->bot_response }}</p>
               <div class="d-flex justify-content-end mt-2">
                 <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editModal{{ $conversation->id }}">Edit</button>
-                <form action="{{ route('chatbot.destroy', $conversation->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus percakapan ini?');">
+                <form action="{{ route('admin.chatbot.destroy', $conversation->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus percakapan ini?');">
                   @csrf
                   @method('DELETE')
                   <button type="submit" class="btn btn-sm btn-danger">Delete</button>
@@ -183,7 +183,7 @@
                     <h5 class="modal-title" id="editModalLabel{{ $conversation->id }}">Edit Percakapan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                  <form action="{{ route('chatbot.update', $conversation->id) }}" method="POST">
+                  <form action="{{ route('admin.chatbot.update', $conversation->id) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
@@ -216,7 +216,7 @@
         <h5>Kirim Pesan ke User & Update Respon Chatbot</h5>
       </div>
       <div class="card-body">
-        <form action="{{ route('chatbot.send') }}" method="POST">
+        <form action="{{ route('admin.chatbot.send') }}" method="POST">
           @csrf
           <div class="mb-3">
             <label for="admin_message" class="form-label">Pesan User:</label>

@@ -202,8 +202,9 @@
       }
     }
   </style>
+</head>
 
-  <script>
+<script>
     async function sendInput() {
       const chatBody = document.querySelector(".chat-body");
       const userInput = document.getElementById("user_input").value.trim();
@@ -222,11 +223,11 @@
       formData.append("_token", document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
       try {
-        // Gunakan helper url Laravel agar dinamis sesuai base url
         const response = await fetch("{{ url('/chatbot') }}", {
           method: "POST",
           headers: { "Accept": "application/json" },
-          body: formData
+          body: formData,
+          credentials: "same-origin"
         });
 
         const data = await response.json();
@@ -257,7 +258,6 @@
       }
     }
   </script>
-</head>
 
 <body>
   <div class="chat-container">

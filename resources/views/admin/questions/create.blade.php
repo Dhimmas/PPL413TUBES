@@ -1,9 +1,20 @@
 <x-app-layout>
     <div class="max-w-4xl mx-auto p-6">
-        <h1 class="text-3xl font-bold text-white mb-6">Tambah Soal</h1>
+        <h1 class="text-3xl font-bold text-white mb-6">Tambah Soal untuk Quiz: {{ $quiz->title }}</h1>
 
         <form method="POST" action="{{ route('admin.questions.store', $quiz) }}" enctype="multipart/form-data">
             @csrf
+
+            {{-- Menampilkan error validasi umum jika ada --}}
+            @if ($errors->any())
+                <div class="bg-red-500 text-white p-4 rounded mb-4">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <div id="question-container">
                 {{-- Soal pertama ditambahkan via JS --}}
@@ -30,7 +41,9 @@
 
             const html = `
             <div class="bg-gray-800 p-6 rounded text-white mb-6" id="question-box-${index}">
-                <h2 class="text-xl font-semibold mb-4">Soal ${index + 1}</h2>
+                <h2 class="text-xl font-semibold mb-4">Soal ${index + 1}
+                    ${index > 0 ? `<button type="button" onclick="removeQuestionForm(${index})" class="ml-4 bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-sm">Hapus</button>` : ''}
+                </h2>
 
                 {{-- Tipe Soal --}}
                 <div class="mb-4">
@@ -40,6 +53,13 @@
                         <option value="essay">Essay</option>
                         <option value="file_based">File-Based (PDF, ZIP, dll)</option>
                     </select>
+                </div>
+
+                {{-- Batas Waktu Per Soal --}}
+                <div class="mb-4">
+                    <label class="block mb-1">Batas Waktu Soal Ini (Menit, Opsional)</label>
+                    <input type="number" name="questions[${index}][time_limit_per_question]" class="w-full p-2 rounded text-black" placeholder="Cth: 5 (menit)">
+                    <small class="text-gray-400">Kosongkan jika tidak ada batas waktu untuk soal ini.</small>
                 </div>
 
                 {{-- Pertanyaan Teks --}}
@@ -71,10 +91,11 @@
                     `).join('')}
                 </div>
 
-                {{-- Jawaban Benar (Hanya untuk file_base dan essay) --}}
+                {{-- Jawaban Benar (Untuk Essay dan File-Based) --}}
                 <div class="mb-4 hidden" id="correct-answer-input-${index}">
-                    <label class="block mb-1">Jawaban Benar</label>
+                    <label class="block mb-1">Jawaban Benar (untuk penilaian otomatis jika berlaku)</label>
                     <input type="text" name="questions[${index}][correct_answer]" class="w-full p-2 rounded text-black">
+                    <small class="text-gray-400">Untuk soal essay/file-based, ini bisa berupa kata kunci, atau hanya untuk referensi admin.</small>
                 </div>
             </div>
             `;
@@ -83,11 +104,23 @@
             attachTypeListener(index);
         }
 
+        function removeQuestionForm(index) {
+            const questionBox = document.getElementById(`question-box-${index}`);
+            if (questionBox) {
+                questionBox.remove();
+            }
+        }
+
         function attachTypeListener(index) {
             const select = document.querySelector(`[data-index="${index}"]`);
             const fileInput = document.getElementById(`file-input-${index}`);
             const optionsInput = document.getElementById(`options-input-${index}`);
             const correctAnswerInput = document.getElementById(`correct-answer-input-${index}`);
+            
+            // Dapatkan semua input yang mungkin ada di dalam optionsInput
+            const mcOptionInputs = optionsInput.querySelectorAll('input[type="text"], input[type="radio"]');
+            const correctAnswerField = correctAnswerInput.querySelector('input');
+
 
             function toggleFields() {
                 const type = select.value;
@@ -98,15 +131,37 @@
                 // Tampilkan/sembunyikan pilihan ganda
                 optionsInput.classList.toggle("hidden", type !== "multiple_choice");
                 
-                // Tampilkan/sembunyikan jawaban benar (untuk short_answer dan essay)
+                // Tampilkan/sembunyikan jawaban benar (untuk essay dan file_based)
                 correctAnswerInput.classList.toggle("hidden", !(type === "file_based" || type === "essay"));
                 
-                // Set required attribute berdasarkan visibility
-                const correctAnswerField = correctAnswerInput.querySelector('input');
+                // Set required/disabled attribute berdasarkan visibility
+                // Untuk Pilihan Ganda:
+                if (type === "multiple_choice") {
+                    mcOptionInputs.forEach(input => input.setAttribute('required', 'required'));
+                } else {
+                    mcOptionInputs.forEach(input => input.removeAttribute('required'));
+                    // Kosongkan nilai saat disembunyikan agar tidak terkirim saat tidak relevan
+                    mcOptionInputs.forEach(input => {
+                        if (input.type === 'text') input.value = '';
+                        if (input.type === 'radio') input.checked = false;
+                    });
+                }
+
+                // Untuk Jawaban Benar (Essay/File-Based):
                 if (type === "file_based" || type === "essay") {
                     correctAnswerField.setAttribute('required', 'required');
                 } else {
                     correctAnswerField.removeAttribute('required');
+                    correctAnswerField.value = ''; // Kosongkan nilai saat disembunyikan
+                }
+
+                // Untuk File Input (File-Based):
+                const fileInputField = fileInput.querySelector('input[type="file"]');
+                if (type === "file_based") {
+                    fileInputField.setAttribute('required', 'required');
+                } else {
+                    fileInputField.removeAttribute('required');
+                    fileInputField.value = ''; // Kosongkan nilai saat disembunyikan
                 }
             }
 
@@ -115,7 +170,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            addQuestionForm();
+            addQuestionForm(); // Tambahkan form soal pertama saat halaman dimuat
         });
     </script>
 </x-app-layout>

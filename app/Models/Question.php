@@ -14,7 +14,8 @@ class Question extends Model
         'image',
         'correct_answer',
         'options',
-        'question_type'
+        'question_type',
+        'time_limit_per_question'
     ];
 
     protected $casts = [

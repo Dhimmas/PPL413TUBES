@@ -10,7 +10,8 @@ class Quiz extends Model
         'title',
         'description',
         'image',
-        'category_id' // Tambahkan field yang akan diisi massal
+        'category_id', // Tambahkan field yang akan diisi massal
+        'time_limit_per_quiz'
     ];
     
     public function category()

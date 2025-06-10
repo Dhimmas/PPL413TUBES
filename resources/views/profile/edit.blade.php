@@ -1,5 +1,4 @@
 <x-app-layout>
-    @include('layouts.navigation')
     <div class="profile-container max-w-4xl mx-auto p-6 bg-white/10 backdrop-blur-md shadow-lg rounded-xl border border-white/20 mt-8 text-white">
         <!-- Profile Header -->
         <div class="text-center">

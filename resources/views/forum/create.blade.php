@@ -7,10 +7,30 @@
 
             <div>
                 <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Judul</label>
-                <input type="text" name="title" id="title"
+                <input type="text" name="title" id="title" value="{{ old('title') }}"
                        class="block w-full border-gray-300 rounded-lg shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm"
                        placeholder="Masukkan judul postingan..."
                        required>
+                @error('title')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- TAMBAHKAN INPUT KATEGORI --}}
+            <div>
+                <label for="forum_category_id" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                <select name="forum_category_id" id="forum_category_id"
+                        class="block w-full border-gray-300 rounded-lg shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm">
+                    <option value="">Pilih Kategori (Opsional)</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('forum_category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('forum_category_id')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
@@ -18,7 +38,10 @@
                 <textarea name="content" id="content" rows="8"
                           class="block w-full border-gray-300 rounded-lg shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm"
                           placeholder="Tulis isi postingan Anda di sini..."
-                          required></textarea>
+                          required>{{ old('content') }}</textarea>
+                @error('content')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
@@ -35,7 +58,7 @@
                             </label>
                             <p class="pl-1">atau tarik dan lepas</p>
                         </div>
-                        <p class="text-xs text-gray-500">PNG, JPG, GIF hingga 10MB</p>
+                        <p class="text-xs text-gray-500">PNG, JPG, GIF hingga 2MB</p> {{-- Sesuaikan dengan validasi controller --}}
                     </div>
                 </div>
                 <div class="mt-4 hidden" id="image-preview-container">
@@ -44,6 +67,9 @@
                         Hapus gambar
                     </button>
                 </div>
+                 @error('image')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="pt-5">
@@ -56,7 +82,6 @@
     </div>
 
     {{-- Script untuk preview gambar --}}
-    {{-- Sebaiknya letakkan ini di file JS terpisah dan di-include di layout Anda --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const imageInput = document.getElementById('image');
@@ -73,7 +98,7 @@
                         reader.onload = function(e) {
                             imagePreview.setAttribute('src', e.target.result);
                             imagePreviewContainer.classList.remove('hidden');
-                            imageUploadArea.classList.add('hidden'); // Sembunyikan area upload
+                            imageUploadArea.classList.add('hidden');
                         }
                         reader.readAsDataURL(file);
                     }
@@ -82,8 +107,8 @@
                 removeImageButton.addEventListener('click', function() {
                     imagePreview.setAttribute('src', '#');
                     imagePreviewContainer.classList.add('hidden');
-                    imageInput.value = ''; // Clear the file input
-                    imageUploadArea.classList.remove('hidden'); // Tampilkan kembali area upload
+                    imageInput.value = ''; 
+                    imageUploadArea.classList.remove('hidden');
                 });
             }
         });

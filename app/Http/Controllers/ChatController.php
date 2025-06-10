@@ -16,7 +16,7 @@ class ChatController extends Controller
         $conversations = Conversation::latest()->get();
 
         // Return view dengan data percakapan
-        return view('Admin.index', compact('conversations'));
+        return view('admin.chatbotz.index', compact('conversations'));
     }
 
     public function user_index()
@@ -47,7 +47,7 @@ class ChatController extends Controller
         $conversation->save();
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('chatbot.index')->with('success', 'Pesan dan respon chatbot berhasil diperbarui.');
+        return redirect()->route('admin.chatbot.index')->with('success', 'Pesan dan respon chatbot berhasil diperbarui.');
     }
 
     /**
@@ -102,5 +102,31 @@ class ChatController extends Controller
 
         // Redirect kembali dengan pesan sukses
         return redirect()->back()->with('success', 'Pesan Anda berhasil terkirim!');
+    }
+    public function chat(Request $request)
+    {
+        try {
+            $request->validate([
+                'user_input' => 'required|string',
+            ]);
+
+            $userInput = strtolower($request->input('user_input'));
+            $response = \App\Models\Conversation::where('user_input', 'like', '%' . $userInput . '%')->first(); // Pastikan namespace model benar
+
+            if ($response) {
+                $responseMessage = $response->bot_response;
+            } else {
+                $responseMessage = 'Maaf, saya tidak mengerti pertanyaan Anda.';
+            }
+
+            return response()->json(['response' => $responseMessage]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+            
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Chatbot API error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan internal.'], 500);
+        }
     }
 }

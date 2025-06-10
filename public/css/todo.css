@@ -1,0 +1,47 @@
+/* Kalender */
+.calendar-day {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.calendar-day:hover {
+    background-color: #f3f4f6;
+}
+
+.calendar-day.today {
+    background-color: #dbeafe;
+    font-weight: bold;
+}
+
+/* Tugas */
+.task-item {
+    transition: background-color 0.2s;
+}
+
+.task-item:hover {
+    background-color: #f9fafb;
+}
+
+.task-completed {
+    text-decoration: line-through;
+    color: #6b7280;
+}
+
+/* Style khusus untuk input waktu */
+input[type="time"] {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background-color: white;
+}
+
+/* Icon clock di browser modern */
+input[type="time"]::-webkit-calendar-picker-indicator {
+    background: none;
+    cursor: pointer;
+}
