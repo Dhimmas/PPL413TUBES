@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 
   <style>
+    /* CSS sama seperti sebelumnya, tidak perlu diubah */
     * {
       box-sizing: border-box;
     }
@@ -209,6 +210,7 @@
 
       if (!userInput) return;
 
+      // Tampilkan pesan user di chat
       const userMessage = document.createElement("div");
       userMessage.className = "chat-message user";
       userMessage.textContent = userInput;
@@ -220,7 +222,8 @@
       formData.append("_token", document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/chatbot", {
+        // Gunakan helper url Laravel agar dinamis sesuai base url
+        const response = await fetch("{{ url('/chatbot') }}", {
           method: "POST",
           headers: { "Accept": "application/json" },
           body: formData
@@ -228,12 +231,14 @@
 
         const data = await response.json();
 
+        // Tampilkan pesan bot di chat
         const botMessage = document.createElement("div");
         botMessage.className = "chat-message bot";
         botMessage.textContent = data.response;
         chatBody.appendChild(botMessage);
 
-        if (data.response.includes("Boleh, silahkan melanjutkan ke halaman konsul, berikut jadwal dari dokter kami")) {
+        // Jika ada respon khusus, tampilkan tombol lanjut
+        if (data.response.includes("Boleh, silahkan melanjutkan ke halaman konsul, berikut merupakan To-Do List Anda")) {
           const button = document.createElement("button");
           button.textContent = "Lihat To-Do List";
           button.onclick = () => window.location.href = "/user/schedules";
@@ -257,7 +262,7 @@
 <body>
   <div class="chat-container">
     <div class="chat-header">
-      <button class="back-button" onclick="window.location.href='/dashboard'">
+      <button class="back-button" onclick="window.location.href='{{ url('/dashboard') }}'">
         &#8592;
       </button>
       <div class="header-content">

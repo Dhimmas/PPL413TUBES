@@ -161,7 +161,7 @@
         <h5>Riwayat Percakapan</h5>
       </div>
       <div class="card-body">
-        @if($conversations->count() > 0)
+        @if($conversations->count())
           @foreach($conversations as $conversation)
             <div class="message-box">
               <p><strong>User:</strong> {{ $conversation->user_input }}</p>

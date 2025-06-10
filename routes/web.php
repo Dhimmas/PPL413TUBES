@@ -86,10 +86,10 @@ Route::get('/', function () {
 });
 
 // Rute untuk halaman riwayat chat
-Route::get('admin/chatbotz/chatbot', [ChatController::class, 'index'])->name('chatbot.index');
+Route::get('admin/chatbot', [ChatController::class, 'index'])->name('chatbot.index');
 
 // Rute untuk mengirim pesan admin dan memperbarui respon chatbot
-Route::post('/chatbot/chatbotz/send', [ChatController::class, 'sendAndUpdateResponse'])->name('chatbot.send');
+Route::post('/chatbot/send', [ChatController::class, 'sendAndUpdateResponse'])->name('chatbot.send');
 
 // Rute untuk menghapus percakapan berdasarkan ID
 Route::delete('/chatbot/{id}', [ChatController::class, 'destroy'])->name('chatbot.destroy');
