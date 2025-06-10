@@ -78,12 +78,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pomodoro', [PomodoroController::class, 'index'])->name('pomodoro.index');
     Route::post('/pomodoro', [PomodoroController::class, 'store'])->name('pomodoro.store');
 
+
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('/tasks', [TaskController::class, 'store']);
+    Route::post('/tasks/{id}/status/{status}', [TaskController::class, 'updateStatus']);
 });
 
-
-Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
-Route::post('/tasks', [TaskController::class, 'store']);
-Route::post('/tasks/{id}/status/{status}', [TaskController::class, 'updateStatus']);
 
 //Route Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {

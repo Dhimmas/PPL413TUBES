@@ -34,7 +34,7 @@
                                 <x-dropdown-link :href="route('goals')" class="text-gray-200 hover:bg-gray-700 hover:text-white">
                                     🎯 Goals
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('progress')" class="text-gray-200 hover:bg-gray-700 hover:text-white">
+                                <x-dropdown-link :href="route('tasks.index')" class="text-gray-200 hover:bg-gray-700 hover:text-white">
                                     📈 Progress
                                 </x-dropdown-link>
                                 <x-dropdown-link :href="route('user.chatbot.index')" class="text-gray-200 hover:bg-gray-700 hover:text-white">
@@ -126,7 +126,7 @@
             @foreach([
                 ['📝', 'To-Do List', 'todos.index'],
                 ['🎯', 'Goals', 'goals'],
-                ['📈', 'Progress', 'progress'],
+                ['📈', 'Progress', 'tasks.index'],
                 ['🤖', 'Chatbot', 'user.chatbot.index'],
                 ['🎓', 'Quiz', 'quiz.index'],
                 ['💬', 'Forum Diskusi', 'forum.index'],
