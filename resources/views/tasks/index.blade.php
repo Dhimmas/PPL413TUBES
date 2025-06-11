@@ -1,4 +1,4 @@
-@include('layouts.navigation')
+<x-app-layout>
 
 <head>
     <meta charset="UTF-8">
@@ -93,3 +93,4 @@
     </div>
 
 </body>
+</x-app-layout>
