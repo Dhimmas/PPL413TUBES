@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<x-app-layout>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -243,11 +241,6 @@
     </div>
   </div>
 
-  <div class="footer">
-    <p>&copy; 2025 Studify Admin Chat Interface. Built with care for the community.</p>
-  </div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
-</html>
+</x-app-layout>
