@@ -23,14 +23,14 @@
                     </h3>
                     
                     <div class="relative inline-block">
-                        <!-- Current Profile Picture -->
-                        <div class="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-white/30 shadow-lg mb-4">
+                        <!-- Current Profile Picture Preview -->
+                        <div class="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-white/30 shadow-lg mb-4" id="current-profile-preview">
                             @if(auth()->user()->profile && auth()->user()->profile->profile_picture)
-                                <img id="profile-preview" src="{{ asset('storage/' . auth()->user()->profile->profile_picture) }}" 
+                                <img src="{{ asset('storage/' . auth()->user()->profile->profile_picture) }}" 
                                      alt="Profile Picture" 
                                      class="w-full h-full object-cover">
                             @else
-                                <div id="profile-preview" class="w-full h-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                                <div class="w-full h-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
                                     <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                                     </svg>
@@ -38,17 +38,52 @@
                             @endif
                         </div>
 
-                        <!-- Upload Area -->
-                        <div class="relative">
+                        <!-- Modern Drag & Drop Upload Area -->
+                        <div class="relative max-w-md mx-auto">
                             <input type="file" name="profile_picture" id="profile_picture" accept="image/*"
                                    class="hidden" onchange="previewProfileImage(this)">
-                            <label for="profile_picture" 
-                                   class="cursor-pointer inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
-                                <i class="fas fa-cloud-upload-alt mr-2"></i>
-                                Choose Photo
-                            </label>
+                            
+                            <div id="profile-upload-area" 
+                                 class="mt-4 flex justify-center px-6 pt-8 pb-8 border-2 border-purple-400 border-dashed rounded-xl hover:border-purple-300 transition duration-300 cursor-pointer bg-white/5 hover:bg-white/10"
+                                 onclick="document.getElementById('profile_picture').click()"
+                                 ondrop="dropHandler(event)" 
+                                 ondragover="dragOverHandler(event)"
+                                 ondragenter="dragEnterHandler(event)"
+                                 ondragleave="dragLeaveHandler(event)">
+                                
+                                <div class="space-y-3 text-center" id="upload-content">
+                                    <div class="mx-auto h-16 w-16 text-purple-400">
+                                        <svg stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true" class="w-full h-full">
+                                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    <div class="text-white">
+                                        <p class="font-semibold text-lg">Choose your profile photo</p>
+                                        <p class="text-white/70 text-sm mt-1">or drag and drop it here</p>
+                                    </div>
+                                    <p class="text-xs text-white/50">PNG, JPG, GIF up to 2MB</p>
+                                </div>
+
+                                <!-- Preview Area (Hidden by default) -->
+                                <div class="hidden" id="image-preview-area">
+                                    <div class="flex flex-col items-center space-y-3">
+                                        <img id="profile-preview-image" src="" alt="Preview" 
+                                             class="w-24 h-24 rounded-full object-cover border-4 border-purple-400 shadow-lg">
+                                        <div class="text-center">
+                                            <p class="text-green-400 font-semibold text-sm">
+                                                <i class="fas fa-check-circle mr-1"></i>
+                                                Photo selected successfully!
+                                            </p>
+                                            <button type="button" onclick="removeProfileImage()" 
+                                                    class="mt-2 text-red-400 hover:text-red-300 text-xs font-medium transition">
+                                                <i class="fas fa-times mr-1"></i>Remove photo
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <p class="text-white/50 text-sm mt-2">PNG, JPG, GIF up to 2MB</p>
+
                         @error('profile_picture')
                             <p class="text-red-300 text-sm mt-2">{{ $message }}</p>
                         @enderror
@@ -239,17 +274,161 @@
     </div>
 
     <script>
-        function previewProfileImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const preview = document.getElementById('profile-preview');
-                    preview.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" class="w-full h-full object-cover">`;
+        let selectedFile = null;
+
+        // Drag and Drop Handlers
+        function dragOverHandler(ev) {
+            ev.preventDefault();
+            ev.dataTransfer.dropEffect = "copy";
+        }
+
+        function dragEnterHandler(ev) {
+            ev.preventDefault();
+            const uploadArea = document.getElementById('profile-upload-area');
+            uploadArea.classList.add('border-purple-300', 'bg-purple-500/10');
+            uploadArea.classList.remove('border-purple-400');
+        }
+
+        function dragLeaveHandler(ev) {
+            ev.preventDefault();
+            const uploadArea = document.getElementById('profile-upload-area');
+            uploadArea.classList.remove('border-purple-300', 'bg-purple-500/10');
+            uploadArea.classList.add('border-purple-400');
+        }
+
+        function dropHandler(ev) {
+            ev.preventDefault();
+            
+            const uploadArea = document.getElementById('profile-upload-area');
+            uploadArea.classList.remove('border-purple-300', 'bg-purple-500/10');
+            uploadArea.classList.add('border-purple-400');
+
+            const files = ev.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (validateFile(file)) {
+                    selectedFile = file;
+                    
+                    // Update the file input
+                    const fileInput = document.getElementById('profile_picture');
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    fileInput.files = dt.files;
+                    
+                    showPreview(file);
                 }
-                
-                reader.readAsDataURL(input.files[0]);
             }
         }
+
+        function previewProfileImage(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (validateFile(file)) {
+                    selectedFile = file;
+                    showPreview(file);
+                }
+            }
+        }
+
+        function validateFile(file) {
+            // Check file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please select a valid image file (JPG, PNG, GIF)');
+                return false;
+            }
+
+            // Check file size (2MB = 2 * 1024 * 1024 bytes)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('File size must be less than 2MB');
+                return false;
+            }
+
+            return true;
+        }
+
+        function showPreview(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const uploadContent = document.getElementById('upload-content');
+                const previewArea = document.getElementById('image-preview-area');
+                const previewImage = document.getElementById('profile-preview-image');
+                const currentPreview = document.getElementById('current-profile-preview');
+                
+                // Update preview image
+                previewImage.src = e.target.result;
+                
+                // Update current profile preview
+                currentPreview.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" class="w-full h-full object-cover">`;
+                
+                // Show preview area, hide upload content
+                uploadContent.classList.add('hidden');
+                previewArea.classList.remove('hidden');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function removeProfileImage() {
+            const uploadContent = document.getElementById('upload-content');
+            const previewArea = document.getElementById('image-preview-area');
+            const fileInput = document.getElementById('profile_picture');
+            const currentPreview = document.getElementById('current-profile-preview');
+            
+            // Reset file input
+            fileInput.value = '';
+            selectedFile = null;
+            
+            // Reset preview areas
+            uploadContent.classList.remove('hidden');
+            previewArea.classList.add('hidden');
+            
+            // Reset current profile preview to original
+            @if(auth()->user()->profile && auth()->user()->profile->profile_picture)
+                currentPreview.innerHTML = `<img src="{{ asset('storage/' . auth()->user()->profile->profile_picture) }}" alt="Profile Picture" class="w-full h-full object-cover">`;
+            @else
+                currentPreview.innerHTML = `
+                    <div class="w-full h-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </div>
+                `;
+            @endif
+        }
+
+        // Add smooth hover effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('profile-upload-area');
+            
+            uploadArea.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            uploadArea.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
     </script>
+
+    <style>
+        #profile-upload-area {
+            transition: all 0.3s ease;
+        }
+        
+        #profile-upload-area:hover svg {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1, transform: translateY(0); }
+        }
+    </style>
 </x-app-layout>
