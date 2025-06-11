@@ -168,49 +168,59 @@ class QuizController extends Controller
     
     public function ranking(Quiz $quiz)
     {
-        // Get top performers with completion time
+        // Get top performers - hanya hasil terbaru per user
         $topScorers = UserQuizResult::with('user')
             ->where('quiz_id', $quiz->id)
             ->where('status', 'completed')
             ->whereNotNull('score')
+            ->whereIn('id', function($query) use ($quiz) {
+                $query->select(\DB::raw('MAX(id)'))
+                    ->from('user_quiz_results')
+                    ->where('quiz_id', $quiz->id)
+                    ->where('status', 'completed')
+                    ->groupBy('user_id');
+            })
             ->orderByDesc('score')
-            ->orderBy('completion_time_minutes')
+            ->orderBy('finished_at')
             ->limit(10)
             ->get();
 
-        // Get fastest completions
-        $fastestCompletions = UserQuizResult::with('user')
-            ->where('quiz_id', $quiz->id)
-            ->where('status', 'completed')
-            ->whereNotNull('completion_time_minutes')
-            ->orderBy('completion_time_minutes')
-            ->limit(10)
-            ->get();
-
-        // Get most recent completions
+        // Get most recent completions - hanya hasil terbaru per user
         $recentCompletions = UserQuizResult::with('user')
             ->where('quiz_id', $quiz->id)
             ->where('status', 'completed')
             ->whereNotNull('finished_at')
+            ->whereIn('id', function($query) use ($quiz) {
+                $query->select(\DB::raw('MAX(id)'))
+                    ->from('user_quiz_results')
+                    ->where('quiz_id', $quiz->id)
+                    ->where('status', 'completed')
+                    ->groupBy('user_id');
+            })
             ->orderByDesc('finished_at')
             ->limit(10)
             ->get();
 
-        // Quiz statistics
+        // Quiz statistics - hitung berdasarkan hasil terbaru per user
         $totalAttempts = UserQuizResult::where('quiz_id', $quiz->id)->count();
-        $completedAttempts = UserQuizResult::where('quiz_id', $quiz->id)->where('status', 'completed')->count();
-        $averageScore = UserQuizResult::where('quiz_id', $quiz->id)
+        
+        $latestResultsPerUser = UserQuizResult::where('quiz_id', $quiz->id)
             ->where('status', 'completed')
-            ->avg('score');
-        $averageTime = UserQuizResult::where('quiz_id', $quiz->id)
-            ->where('status', 'completed')
-            ->whereNotNull('completion_time_minutes')
-            ->avg('completion_time_minutes');
+            ->whereIn('id', function($query) use ($quiz) {
+                $query->select(\DB::raw('MAX(id)'))
+                    ->from('user_quiz_results')
+                    ->where('quiz_id', $quiz->id)
+                    ->where('status', 'completed')
+                    ->groupBy('user_id');
+            });
+
+        $completedAttempts = $latestResultsPerUser->count();
+        $averageScore = $latestResultsPerUser->avg('score');
+        $averageTime = $latestResultsPerUser->whereNotNull('completion_time_minutes')->avg('completion_time_minutes');
 
         return view('quiz.ranking', compact(
             'quiz', 
             'topScorers', 
-            'fastestCompletions', 
             'recentCompletions',
             'totalAttempts',
             'completedAttempts',

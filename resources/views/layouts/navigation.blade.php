@@ -213,6 +213,16 @@
                                         Edit Profile
                                     </x-dropdown-link>
 
+                                    @if(auth()->user()->is_super_admin)
+                                        <div class="border-t border-slate-600/50 my-2"></div>
+                                        <x-dropdown-link :href="route('super-admin.index')" class="text-gray-100 hover:bg-purple-500/20 hover:text-purple-300 transition-all duration-200 flex items-center px-4 py-3 group">
+                                            <svg class="w-4 h-4 mr-3 group-hover:scale-110 transition-transform text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                            </svg>
+                                            Super Admin
+                                        </x-dropdown-link>
+                                    @endif
+
                                     <div class="border-t border-slate-600/50 my-2"></div>
 
                                     <form method="POST" action="{{ route('logout') }}">
@@ -360,6 +370,21 @@
                                 </form>
                             </div>
                         </div>
+
+                        {{-- Super Admin Link --}}
+                        @if(auth()->user()->is_super_admin)
+                            <div class="pt-2">
+                                <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 px-4">Admin</h3>
+                                <div class="space-y-2">
+                                    <x-responsive-nav-link :href="route('super-admin.index')" :active="request()->routeIs('super-admin.*')" @click="open = false" class="text-white hover:text-blue-300 hover:bg-slate-700 flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 border border-slate-600">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                        </svg>
+                                        <span class="font-medium">Super Admin</span>
+                                    </x-responsive-nav-link>
+                                </div>
+                            </div>
+                        @endif
                     @else
                         <div class="pt-4">
                             <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 px-4">Settings</h3>

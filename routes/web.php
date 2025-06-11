@@ -88,7 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/quiz/result/{result}/finalize', [UserQuizController::class, 'finalizeQuiz'])->name('quiz.finalize');
     Route::get('/quiz/{quiz}/get-question/{questionNumber}', [UserQuizController::class, 'getQuestionByNumber'])->name('quiz.getQuestion');
     Route::get('/quiz/{quiz}/result', [UserQuizController::class, 'result'])->name('quiz.result');
-    Route::get('/quiz/{quiz}/ranking', [\App\Http\Controllers\Admin\QuizController::class, 'ranking'])->name('quiz.ranking');
+    Route::get('/quiz/{quiz}/ranking', [QuizController::class, 'ranking'])->name('quiz.ranking');
     
     // Quiz Activity Overview (optional - untuk AJAX calls jika diperlukan)
     Route::get('/quiz/activity/overview', [UserQuizController::class, 'getUserActivityOverview'])->name('quiz.activity.overview');
@@ -138,6 +138,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/chatbot/{id}/edit', [ChatController::class, 'edit'])->name('chatbot.edit');
     // Rute untuk memperbarui percakapan berdasarkan ID
     Route::put('/chatbot/{id}', [ChatController::class, 'update'])->name('chatbot.update');
+});
+
+// Super Admin Routes
+Route::middleware(['auth', 'super_admin'])->prefix('super-admin')->group(function () {
+    Route::get('/', [App\Http\Controllers\SuperAdminController::class, 'index'])->name('super-admin.index');
+    Route::post('/users/{user}/toggle-admin', [App\Http\Controllers\SuperAdminController::class, 'toggleSuperAdmin'])->name('super-admin.toggle-admin');
+    Route::delete('/users/{user}', [App\Http\Controllers\SuperAdminController::class, 'destroy'])->name('super-admin.delete-user');
 });
 
 Route::fallback(function () {

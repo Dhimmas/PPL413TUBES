@@ -41,6 +41,155 @@ let currentQuestionData = null;
 let quizTimerInterval; 
 let timeRemaining = timeRemainingFromServer;
 let questionsCache = [];
+let answeredQuestions = new Set();
+
+// --- QUESTION NAVIGATION FUNCTIONS ---
+
+function createQuestionNavigation() {
+    // Navigation sudah ada di HTML, jadi kita hanya perlu populate question grid
+    const questionGrid = document.getElementById('questionGrid');
+    if (questionGrid) {
+        questionGrid.innerHTML = generateQuestionCards();
+        console.log("Question grid populated");
+    }
+    
+    // Initialize progress
+    updateNavigationProgress();
+    
+    // Setup event listeners
+    setupNavigationListeners();
+}
+
+function generateQuestionCards() {
+    let cardsHTML = '';
+    for (let i = 1; i <= totalQuestions; i++) {
+        cardsHTML += `
+            <div class="question-card" 
+                 onclick="goToQuestionCard(${i})"
+                 id="nav-card-${i}"
+                 data-question="${i}"
+                 title="Question ${i}">
+                <span class="card-number">${i}</span>
+            </div>
+        `;
+    }
+    return cardsHTML;
+}
+
+function updateQuestionCardState(questionNumber, state) {
+    const card = document.getElementById(`nav-card-${questionNumber}`);
+    if (!card) return;
+
+    // Remove all state classes
+    card.classList.remove('current', 'answered', 'unanswered');
+    
+    // Add new state class
+    if (state) {
+        card.classList.add(state);
+    }
+}
+
+function updateNavigationProgress() {
+    const answered = answeredQuestions.size;
+    const percentage = (answered / totalQuestions) * 100;
+    
+    const progressCount = document.getElementById('progressCount');
+    const progressFill = document.getElementById('progressFill');
+    
+    if (progressCount) progressCount.textContent = `${answered}/${totalQuestions}`;
+    if (progressFill) progressFill.style.width = `${percentage}%`;
+}
+
+function markQuestionAnswered(questionNumber) {
+    answeredQuestions.add(questionNumber);
+    updateQuestionCardState(questionNumber, 'answered');
+    updateNavigationProgress();
+}
+
+function markQuestionUnanswered(questionNumber) {
+    answeredQuestions.delete(questionNumber);
+    updateQuestionCardState(questionNumber, 'unanswered');
+    updateNavigationProgress();
+}
+
+function setCurrentQuestion(questionNumber) {
+    // Remove current state from all cards
+    document.querySelectorAll('.question-card').forEach(card => {
+        card.classList.remove('current');
+    });
+    
+    // Add current state to target card
+    updateQuestionCardState(questionNumber, 'current');
+}
+
+// Global functions for onclick handlers
+window.toggleQuestionNav = function() {
+    // Only work on mobile/tablet
+    if (window.innerWidth >= 1024) return;
+    
+    const navCard = document.getElementById('questionNavigationCard');
+    const overlay = document.getElementById('navOverlay');
+    
+    if (navCard && overlay) {
+        navCard.classList.toggle('show');
+        overlay.classList.toggle('show');
+        document.body.classList.toggle('nav-open');
+    }
+}
+
+window.goToQuestionCard = async function(questionNumber) {
+    console.log(`Navigation card ${questionNumber} clicked`);
+    
+    // Hide navigation on mobile after selection
+    if (window.innerWidth < 1024) {
+        toggleQuestionNav();
+    }
+    
+    // Disable navigation during transition
+    disableAllNavButtons();
+    
+    try {
+        // Save current answer
+        await saveCurrentAnswer();
+        
+        // Navigate to question
+        await navigateToQuestion(questionNumber);
+        
+    } catch (error) {
+        console.error("Error during card navigation:", error);
+        alert("Terjadi kesalahan saat berpindah soal");
+    } finally {
+        // Re-enable navigation
+        enableAllNavButtons();
+    }
+}
+
+// Setup navigation event listeners
+function setupNavigationListeners() {
+    // Close navigation on escape key (only on mobile/tablet)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && window.innerWidth < 1024) {
+            const navCard = document.getElementById('questionNavigationCard');
+            if (navCard && navCard.classList.contains('show')) {
+                toggleQuestionNav();
+            }
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024) {
+            // Desktop: Remove mobile classes and ensure navigation is visible
+            const navCard = document.getElementById('questionNavigationCard');
+            const overlay = document.getElementById('navOverlay');
+            if (navCard) {
+                navCard.classList.remove('show');
+            }
+            if (overlay) overlay.classList.remove('show');
+            document.body.classList.remove('nav-open');
+        }
+    });
+}
 
 // --- 3. FUNGSI UTILITY ---
 
@@ -125,85 +274,20 @@ function updateNavigationButtons() {
     }
 }
 
+// Remove circular pagination - replace with empty function
 function renderQuestionPagination() {
-    console.log("Rendering pagination for question:", currentQuestionData?.question_number);
-    
-    if (!currentQuestionData) return;
+    // Hide circular pagination completely
     const paginationContainer = document.getElementById('question-pagination');
-    if (!paginationContainer) {
-        console.error("Pagination container not found!");
-        return;
+    if (paginationContainer) {
+        paginationContainer.style.display = 'none';
     }
-
-    let html = '';
-    for (let i = 1; i <= totalQuestions; i++) {
-        const isActive = (i === currentQuestionData.question_number) ? 'bg-blue-500 text-white' : 'bg-gray-700 hover:bg-gray-600 text-gray-300';
-        const questionInCache = questionsCache.find(q => q.question_number === i);
-        const isAnswered = questionInCache && userAnswers[questionInCache.id] ? 'border-blue-400 border-2' : ''; 
-        html += `<button type="button" data-question-number="${i}" class="question-page-btn w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${isActive} ${isAnswered} transition duration-200 ease-in-out cursor-pointer">${i}</button>`;
-    }
-    paginationContainer.innerHTML = html;
-    
-    console.log("Pagination HTML set, attaching listeners...");
-    attachPaginationEventListeners();
+    console.log("Circular pagination hidden - using navigation card instead");
 }
 
+// Remove circular pagination event listeners
 function attachPaginationEventListeners() {
-    const buttons = document.querySelectorAll('.question-page-btn');
-    console.log("Found pagination buttons:", buttons.length);
-    
-    buttons.forEach((button, index) => {
-        // Remove existing listeners by cloning
-        const newButton = button.cloneNode(true);
-        button.parentNode.replaceChild(newButton, button);
-        
-        // Add event listener to new button
-        newButton.addEventListener('click', async function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            const targetQNumber = parseInt(this.dataset.questionNumber);
-            console.log(`Pagination button ${targetQNumber} clicked`);
-            
-            if (isNaN(targetQNumber)) {
-                console.error("Invalid question number:", this.dataset.questionNumber);
-                return;
-            }
-            
-            // Disable all buttons during navigation
-            disableAllNavButtons();
-            
-            try {
-                // Save current answer
-                await saveCurrentAnswer();
-                
-                // Navigate to target question
-                await navigateToQuestion(targetQNumber);
-                
-            } catch (error) {
-                console.error("Error during navigation:", error);
-                alert("Terjadi kesalahan saat berpindah soal");
-            } finally {
-                // Re-enable buttons
-                enableAllNavButtons();
-            }
-        });
-        
-        // Visual feedback
-        newButton.addEventListener('mousedown', function() {
-            this.style.transform = 'scale(0.95)';
-        });
-        
-        newButton.addEventListener('mouseup', function() {
-            this.style.transform = 'scale(1)';
-        });
-        
-        newButton.addEventListener('mouseleave', function() {
-            this.style.transform = 'scale(1)';
-        });
-    });
-    
-    console.log("Event listeners attached to", buttons.length, "pagination buttons");
+    // No longer needed - navigation card handles this
+    console.log("Circular pagination listeners skipped - using navigation card");
 }
 
 /**
@@ -221,6 +305,13 @@ async function saveCurrentAnswer() {
 
     // Update state lokal langsung
     userAnswers[currentQuestionData.id] = answer;
+
+    // Mark as answered if not empty
+    if (answer !== null && answer.trim() !== '') {
+        markQuestionAnswered(currentQuestionData.question_number);
+    } else {
+        markQuestionUnanswered(currentQuestionData.question_number);
+    }
 
     try {
         const response = await fetch(`/quiz/${quizId}/submit-answer`, {
@@ -246,19 +337,21 @@ async function saveCurrentAnswer() {
 }
 
 function disableAllNavButtons() {
-    const buttons = document.querySelectorAll('#prev-question-btn, #next-question-btn, .question-page-btn');
+    const buttons = document.querySelectorAll('#prev-question-btn, #next-question-btn, .question-card');
     buttons.forEach(btn => {
         btn.disabled = true;
         btn.classList.add('opacity-50', 'cursor-not-allowed');
+        btn.style.pointerEvents = 'none';
     });
     console.log("Disabled", buttons.length, "navigation buttons");
 }
 
 function enableAllNavButtons() {
-    const buttons = document.querySelectorAll('#prev-question-btn, #next-question-btn, .question-page-btn');
+    const buttons = document.querySelectorAll('#prev-question-btn, #next-question-btn, .question-card');
     buttons.forEach(btn => {
         btn.disabled = false;
         btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        btn.style.pointerEvents = 'auto';
     });
     console.log("Enabled", buttons.length, "navigation buttons");
 }
@@ -311,16 +404,13 @@ async function displayQuestion(question) {
         }
     }
     
+    // Update navigation states
+    setCurrentQuestion(question.question_number);
     updateNavigationButtons();
-    renderQuestionPagination();
     
     console.log("Question displayed successfully:", question.question_number);
 }
 
-/**
- * Pindah ke nomor soal yang dituju.
- * @param {number} targetQNumber - Nomor soal yang akan ditampilkan.
- */
 async function navigateToQuestion(targetQNumber) {
     console.log(`Navigating to question ${targetQNumber}`);
     
@@ -442,6 +532,16 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
         console.error("Error parsing questionsCache from data attribute:", e);
     }
+    
+    // Create question navigation (hanya populate grid, HTML sudah ada)
+    createQuestionNavigation();
+    
+    // Initialize answered questions from cache
+    questionsCache.forEach(question => {
+        if (userAnswers[question.id] && userAnswers[question.id].trim() !== '') {
+            answeredQuestions.add(question.question_number);
+        }
+    });
     
     // Validate initial question
     if (!initialQuestion || !initialQuestion.id) {
