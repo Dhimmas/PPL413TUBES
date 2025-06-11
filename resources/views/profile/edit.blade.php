@@ -104,7 +104,7 @@
                             <label for="name" class="block text-white/90 font-medium mb-2">
                                 <i class="fas fa-signature mr-2 text-green-400"></i>Full Name
                             </label>
-                            <input type="text" name="name" id="name" :value="old('name', $user->name)" required
+                            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}"
                                    class="w-full p-4 rounded-xl bg-white/10 text-white placeholder-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
                                    placeholder="Enter your full name">
                             @error('name')
@@ -117,7 +117,7 @@
                             <label for="email" class="block text-white/90 font-medium mb-2">
                                 <i class="fas fa-envelope mr-2 text-purple-400"></i>Email Address
                             </label>
-                            <input type="email" name="email" id="email" :value="old('email', $user->email)" required
+                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}"
                                    class="w-full p-4 rounded-xl bg-white/10 text-white placeholder-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" 
                                    placeholder="Enter your email">
                             @error('email')
@@ -154,7 +154,7 @@
                             <label for="phone" class="block text-white/90 font-medium mb-2">
                                 <i class="fas fa-phone mr-2 text-green-400"></i>Phone Number
                             </label>
-                            <input type="text" name="phone" id="phone" :value="old('phone', optional($user->profile)->phone)" 
+                            <input type="text" name="phone" id="phone" value="{{ old('phone', optional($user->profile)->phone) }}" 
                                    class="w-full p-4 rounded-xl bg-white/10 text-white placeholder-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all" 
                                    placeholder="Enter your phone number">
                             @error('phone')
@@ -168,7 +168,7 @@
                                 <i class="fas fa-birthday-cake mr-2 text-orange-400"></i>Date of Birth
                             </label>
                             <input type="date" name="tanggal_lahir" id="tanggal_lahir" 
-                                   :value="old('tanggal_lahir', optional($user->profile)->tanggal_lahir?->format('Y-m-d'))" 
+                                   value="{{ old('tanggal_lahir', optional($user->profile)->tanggal_lahir?->format('Y-m-d')) }}" 
                                    class="w-full p-4 rounded-xl bg-white/10 text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
                             @error('tanggal_lahir')
                                 <p class="text-red-300 text-sm mt-2">{{ $message }}</p>

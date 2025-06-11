@@ -63,11 +63,15 @@ class ProfileController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'name' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255'],
             'gender' => ['nullable', 'in:Laki-laki,Perempuan'],
             'tanggal_lahir' => ['nullable', 'date'],
             'phone' => ['nullable', 'string', 'max:20'],
             'bio' => ['nullable', 'string', 'max:1000'],
             'profile_picture' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
+            'current_password' => ['nullable', 'string'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
         $user = $request->user();
@@ -77,26 +81,70 @@ class ProfileController extends Controller
         if ($request->hasFile('profile_picture')) {
             // Delete old profile picture if exists
             if ($profile && $profile->profile_picture) {
-                Storage::disk('public')->delete($profile->profile_picture);
+                \Storage::disk('public')->delete($profile->profile_picture);
             }
             
             $path = $request->file('profile_picture')->store('profile_pictures', 'public');
             $validated['profile_picture'] = $path;
         }
 
-        if ($profile) {
-            // Update existing profile - only update fields that are provided
-            $updateData = array_filter($validated, function($value) {
-                return $value !== null;
-            });
-            $profile->update($updateData);
-        } else {
-            // Create new profile
-            $validated['user_id'] = $user->id;
-            Profile::create($validated);
+        // Update user data only if provided
+        $userUpdateData = [];
+        if (!empty($validated['name'])) {
+            $userUpdateData['name'] = $validated['name'];
+        }
+        if (!empty($validated['email']) && $validated['email'] !== $user->email) {
+            // Check if email is unique
+            $existingUser = \App\Models\User::where('email', $validated['email'])->where('id', '!=', $user->id)->first();
+            if ($existingUser) {
+                return back()->withErrors(['email' => 'Email sudah digunakan oleh pengguna lain.'])->withInput();
+            }
+            $userUpdateData['email'] = $validated['email'];
+            $userUpdateData['email_verified_at'] = null; // Reset email verification if email changed
+        }
+
+        // Update password if provided
+        if (!empty($validated['current_password']) && !empty($validated['password'])) {
+            if (!\Hash::check($validated['current_password'], $user->password)) {
+                return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai.'])->withInput();
+            }
+            $userUpdateData['password'] = \Hash::make($validated['password']);
+        }
+
+        // Update user data if there are changes
+        if (!empty($userUpdateData)) {
+            $user->update($userUpdateData);
+        }
+
+        // Prepare profile data
+        $profileData = [];
+        if (isset($validated['profile_picture'])) {
+            $profileData['profile_picture'] = $validated['profile_picture'];
+        }
+        if (isset($validated['gender'])) {
+            $profileData['gender'] = $validated['gender'];
+        }
+        if (isset($validated['tanggal_lahir'])) {
+            $profileData['tanggal_lahir'] = $validated['tanggal_lahir'];
+        }
+        if (isset($validated['phone'])) {
+            $profileData['phone'] = $validated['phone'];
+        }
+        if (isset($validated['bio'])) {
+            $profileData['bio'] = $validated['bio'];
+        }
+
+        // Update or create profile only if there are changes
+        if (!empty($profileData)) {
+            if ($profile) {
+                $profile->update($profileData);
+            } else {
+                $profileData['user_id'] = $user->id;
+                \App\Models\Profile::create($profileData);
+            }
         }
         
-        return Redirect::route('profile.edit')->with('status', 'profile-detail-updated');
+        return redirect()->route('profile.edit')->with('status', 'profile-detail-updated');
     }
 
     /**

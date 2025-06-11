@@ -25,7 +25,7 @@ class ChatController extends Controller
         $conversations = Conversation::latest()->get();
 
         // Return view dengan data percakapan
-        return view('user.index', compact('conversations'));
+        return view('User.index', compact('conversations'));
     }
 
     /**

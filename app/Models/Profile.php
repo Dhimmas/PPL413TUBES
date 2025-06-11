@@ -13,10 +13,10 @@ class Profile extends Model
     protected $fillable = [
         'user_id',
         'profile_picture',
-        'tanggal_lahir',
         'gender',
+        'tanggal_lahir',
         'phone',
-        'bio'
+        'bio',
     ];
 
     protected $casts = [
@@ -26,11 +26,5 @@ class Profile extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    // Tambahkan accessor untuk age
-    public function getAgeAttribute()
-    {
-        return $this->tanggal_lahir ? $this->tanggal_lahir->age : null;
     }
 }
