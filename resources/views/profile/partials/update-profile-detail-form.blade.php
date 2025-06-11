@@ -1,76 +1,66 @@
 <section>
-    <header>
-        <p class="mt-1 text-sm text-gray-300">
-            Lengkapi informasi tambahan akunmu.
-        </p>
-    </header>
-
-    <form method="post" action="{{ route('profile.add') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.add') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
-        <!-- Gender -->
-        <div>
-            <x-input-label for="gender" value="Jenis Kelamin" class="text-white" />
-            <select name="gender" id="gender" class="w-full bg-white/10 text-white placeholder-gray-300 border border-white/20 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="" class="text-black">Pilih Jenis Kelamin</option>
-                <option value="Laki-laki" @selected(optional($user->profile)->gender == 'Laki-laki') class="text-black">Laki-laki</option>
-                <option value="Perempuan" @selected(optional($user->profile)->gender == 'Perempuan') class="text-black">Perempuan</option>
-            </select>
-            <x-input-error :messages="$errors->get('gender')" class="mt-2 text-red-300" />
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Gender -->
+            <div>
+                <x-input-label for="gender" value="Gender" class="text-white/90 font-medium" />
+                <select name="gender" id="gender" class="mt-2 w-full bg-white/10 text-white border border-white/20 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                    <option value="" class="text-gray-800">Select Gender</option>
+                    <option value="Laki-laki" @selected(optional($user->profile)->gender == 'Laki-laki') class="text-gray-800">Male</option>
+                    <option value="Perempuan" @selected(optional($user->profile)->gender == 'Perempuan') class="text-gray-800">Female</option>
+                </select>
+                <x-input-error :messages="$errors->get('gender')" class="mt-2 text-red-300" />
+            </div>
+
+            <!-- Phone -->
+            <div>
+                <x-input-label for="phone" value="Phone Number" class="text-white/90 font-medium" />
+                <x-text-input type="text" name="phone" id="phone" :value="old('phone', optional($user->profile)->phone)" 
+                    class="mt-2 w-full bg-white/10 text-white placeholder-white/50 border border-white/20 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
+                    placeholder="Enter your phone number" />
+                <x-input-error :messages="$errors->get('phone')" class="mt-2 text-red-300" />
+            </div>
         </div>
 
-        <!-- Tanggal Lahir
+        <!-- Date of Birth -->
         <div>
-            <x-input-label for="tanggal_lahir" value="Tanggal Lahir" class="text-white" />
+            <x-input-label for="tanggal_lahir" value="Date of Birth" class="text-white/90 font-medium" />
             <x-text-input type="date" 
                          name="tanggal_lahir" 
                          id="tanggal_lahir" 
                          :value="old('tanggal_lahir', optional($user->profile)->tanggal_lahir?->format('Y-m-d'))" 
-                         class="w-full bg-white/10 text-white placeholder-gray-300 border border-white/20 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                         class="mt-2 w-full bg-white/10 text-white border border-white/20 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
             <x-input-error :messages="$errors->get('tanggal_lahir')" class="mt-2 text-red-300" />
-        </div> -->
-
-        <!-- Phone -->
-        <div>
-            <x-input-label for="phone" value="Nomor Telepon" class="text-white" />
-            <x-text-input type="text" name="phone" id="phone" :value="old('phone', optional($user->profile)->phone)" class="w-full bg-white/10 text-white placeholder-gray-300 border border-white/20 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <x-input-error :messages="$errors->get('phone')" class="mt-2 text-red-300" />
         </div>
 
         <!-- Bio -->
         <div>
-            <x-input-label for="bio" value="Bio" class="text-white" />
-            <textarea id="bio" name="bio" class="w-full bg-white/10 text-white placeholder-gray-300 border border-white/20 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4">{{ old('bio', optional($user->profile)->bio) }}</textarea>
+            <x-input-label for="bio" value="Bio" class="text-white/90 font-medium" />
+            <textarea id="bio" name="bio" rows="4"
+                class="mt-2 w-full bg-white/10 text-white placeholder-white/50 border border-white/20 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none" 
+                placeholder="Tell us about yourself...">{{ old('bio', optional($user->profile)->bio) }}</textarea>
             <x-input-error :messages="$errors->get('bio')" class="mt-2 text-red-300" />
         </div>
 
-        <!-- Current Profile Picture -->
-        @if(optional($user->profile)->profile_picture)
-        <div>
-            <label class="block text-sm font-medium text-white mb-2">Foto Profil Saat Ini</label>
-            <img src="{{ asset('storage/' . $user->profile->profile_picture) }}" 
-                 alt="Current Profile Picture" 
-                 class="w-20 h-20 rounded-full object-cover">
-        </div>
-        @endif
-
-        <!-- Foto Profil -->
-        <div>
-            <x-input-label for="profile_picture" value="{{ optional($user->profile)->profile_picture ? 'Ganti Foto Profil' : 'Upload Foto Profil' }}" class="text-white" />
-            <input type="file" 
-                   name="profile_picture" 
-                   id="profile_picture" 
-                   accept="image/*"
-                   class="mt-1 block w-full text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-            <p class="mt-1 text-sm text-gray-400">Maksimal 2MB. Format: JPG, PNG, GIF</p>
-            <x-input-error :messages="$errors->get('profile_picture')" class="mt-2 text-red-300" />
-        </div>
-
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
-            @if (session('status') === 'profile-detail-updated')
-                <p class="text-sm text-green-300">{{ __('Tersimpan!') }}</p>
-            @endif
+        <div class="flex items-center justify-between pt-4">
+            <div class="flex items-center">
+                @if (session('status') === 'profile-detail-updated')
+                    <div class="flex items-center text-green-400 animate-fade-in">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        {{ __('Saved successfully!') }}
+                    </div>
+                @endif
+            </div>
+            <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                {{ __('Save Changes') }}
+            </button>
         </div>
     </form>
 </section>

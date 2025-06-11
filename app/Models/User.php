@@ -15,6 +15,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin', // Tambahkan jika belum ada
     ];
 
     protected $hidden = [
@@ -24,8 +25,42 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed', // Aktifkan jika menggunakan Laravel 10+
+        'password' => 'hashed',
+        'is_admin' => 'boolean', // Tambahkan jika belum ada
     ];
+
+    // Tambahkan relasi profile
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    // Relasi untuk Quiz Results
+    public function quizResults()
+    {
+        return $this->hasMany(UserQuizResult::class);
+    }
+
+    // Relasi untuk mendapatkan quiz yang sudah diselesaikan
+    public function completedQuizzes()
+    {
+        return $this->belongsToMany(Quiz::class, 'user_quiz_results')
+                    ->wherePivot('status', 'completed')
+                    ->withPivot('score', 'finished_at')
+                    ->withTimestamps();
+    }
+
+    // Method untuk mengecek apakah user sudah mengerjakan quiz tertentu
+    public function hasAttemptedQuiz($quizId)
+    {
+        return $this->quizResults()->where('quiz_id', $quizId)->exists();
+    }
+
+    // Method untuk mendapatkan hasil quiz tertentu
+    public function getQuizResult($quizId)
+    {
+        return $this->quizResults()->where('quiz_id', $quizId)->latest()->first();
+    }
 
     // Relasi lainnya (tidak diubah)
     public function forumPosts()

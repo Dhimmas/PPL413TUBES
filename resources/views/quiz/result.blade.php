@@ -131,6 +131,14 @@
                             <div class="text-gray-400">Persentase</div>
                         </div>
                     </div>
+
+                    @if($result->completion_time_minutes)
+                    <!-- Completion Time -->
+                    <div class="bg-dark-700 p-4 rounded-lg text-center mt-4 card-hover">
+                        <div class="text-2xl font-bold text-blue-400">⏱️ {{ number_format($result->completion_time_minutes, 1) }} menit</div>
+                        <div class="text-gray-400">Waktu Penyelesaian</div>
+                    </div>
+                    @endif
                 </div>
             </div>
 
@@ -233,14 +241,14 @@
                 <a href="{{ route('quiz.index') }}" class="flex-1 bg-dark-700 hover:bg-dark-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg text-center transition duration-300 flex items-center justify-center card-hover">
                     <i class="fas fa-arrow-left mr-3"></i> Kembali ke Daftar Quiz
                 </a>
+                <a href="{{ route('quiz.ranking', $result->quiz->id) }}" class="flex-1 bg-gradient-to-r from-yellow-600 to-orange-600 hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg shadow-lg text-center transition duration-300 flex items-center justify-center card-hover">
+                    <i class="fas fa-trophy mr-3"></i> Lihat Ranking
+                </a>
                 @if($performanceRatio < 0.8)
                 <a href="{{ route('quiz.attempt', $result->quiz->id) }}" class="flex-1 bg-gradient-to-r from-primary-600 to-purple-600 hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg shadow-lg text-center transition duration-300 flex items-center justify-center card-hover">
                     <i class="fas fa-redo mr-3"></i> Coba Lagi
                 </a>
                 @endif
-                <a href="#" class="flex-1 bg-dark-700 hover:bg-dark-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg text-center transition duration-300 flex items-center justify-center card-hover">
-                    <i class="fas fa-download mr-3"></i> Download Hasil
-                </a>
             </div>
         @else
             <!-- No Questions/Answers Found -->

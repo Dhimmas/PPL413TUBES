@@ -64,12 +64,11 @@ class ProfileTest extends TestCase
             'profile_picture' => $file,
         ]);
 
-
         $response
             ->assertSessionHasNoErrors()
             ->assertRedirect('/profile');
 
-        // Cek bahwa file disimpan di storage/public (pastikan di controller kamu pakai disk 'public')
+        // Cek bahwa file disimpan di storage/public
         Storage::disk('public')->assertExists('profile_pictures/' . $file->hashName());
 
         // Cek data user
@@ -78,6 +77,7 @@ class ProfileTest extends TestCase
         $this->assertSame('2002-01-01', $user->profile->tanggal_lahir);
         $this->assertSame('082152257872', $user->profile->phone);
         $this->assertSame('Mahasiswa jurusan Sistem Informasi', $user->profile->bio);
+        $this->assertStringContains('profile_pictures/', $user->profile->profile_picture);
     }
  
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void

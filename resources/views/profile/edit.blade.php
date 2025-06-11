@@ -1,65 +1,170 @@
 <x-app-layout>
-    <div class="profile-container max-w-4xl mx-auto p-6 bg-white/10 backdrop-blur-md shadow-lg rounded-xl border border-white/20 mt-8 text-white">
-        <!-- Profile Header -->
-            <div class="text-center">
-            @if(optional($user->profile)->profile_picture)
-                <img src="{{ asset('storage/' . $user->profile->profile_picture) }}" 
-                     alt="Foto Profil" 
-                     class="w-40 h-40 rounded-full mx-auto object-cover shadow-md" />
-            @else
-                <div class="w-40 h-40 rounded-full mx-auto bg-gray-600 flex items-center justify-center shadow-md">
-                    <svg class="w-20 h-20 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Profile') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            
+            <!-- Activity Overview Section -->
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    <header>
+                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            {{ __('Activity Overview') }}
+                        </h2>
+                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                            {{ __('Your quiz activity and progress summary.') }}
+                        </p>
+                    </header>
+
+                    <!-- Quiz Statistics Grid -->
+                    <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <!-- Total Quizzes Available -->
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                {{ $quizStats['total_available_quizzes'] }}
+                            </div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                Total Quiz
+                            </div>
+                        </div>
+
+                        <!-- Completed Quizzes -->
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-green-600 dark:text-green-400">
+                                {{ $quizStats['completed_quizzes'] }}
+                            </div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                Selesai
+                            </div>
+                        </div>
+
+                        <!-- In Progress -->
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                                {{ $quizStats['in_progress_quizzes'] }}
+                            </div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                Berlangsung
+                            </div>
+                        </div>
+
+                        <!-- Average Score -->
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                                {{ $quizStats['average_score'] }}
+                            </div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                Rata-rata Skor
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completion Rate -->
+                    <div class="mt-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Progress Completion
+                            </span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">
+                                {{ $quizStats['completion_rate'] }}%
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                            <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+                                 style="width: {{ $quizStats['completion_rate'] }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Completed Quizzes -->
+                    @if($quizStats['recent_completed_quizzes']->count() > 0)
+                    <div class="mt-6">
+                        <h3 class="text-md font-medium text-gray-900 dark:text-gray-100 mb-3">
+                            Quiz Terbaru yang Diselesaikan
+                        </h3>
+                        <div class="space-y-2">
+                            @foreach($quizStats['recent_completed_quizzes'] as $result)
+                            <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-gray-100">
+                                        {{ $result->quiz->title }}
+                                    </div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $result->finished_at->format('d M Y') }}
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-green-600 dark:text-green-400">
+                                        {{ $result->score }}/{{ $result->quiz->questions->count() }}
+                                    </div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ round(($result->score / $result->quiz->questions->count()) * 100, 1) }}%
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        <div class="mt-3">
+                            <a href="{{ route('quiz.index') }}" 
+                               class="text-blue-600 dark:text-blue-400 hover:text-blue-500 text-sm font-medium">
+                                Lihat Semua Quiz →
+                            </a>
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Suggested Quizzes -->
+                    @if($uncompletedQuizzes->count() > 0)
+                    <div class="mt-6">
+                        <h3 class="text-md font-medium text-gray-900 dark:text-gray-100 mb-3">
+                            Quiz yang Belum Dikerjakan
+                        </h3>
+                        <div class="space-y-2">
+                            @foreach($uncompletedQuizzes as $quiz)
+                            <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-gray-100">
+                                        {{ $quiz->title }}
+                                    </div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $quiz->category?->name ?? 'Tidak Berkategori' }} • {{ $quiz->questions_count }} soal
+                                    </div>
+                                </div>
+                                <a href="{{ route('quiz.attempt', $quiz->id) }}" 
+                                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200">
+                                    Mulai
+                                </a>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
                 </div>
-            @endif
-            <h1 class="text-3xl font-semibold mt-4">{{ $user->name }}</h1>
-            <p class="text-sm text-gray-300 mt-2">{{ $user->email }}</p>
-            @if(optional($user->profile)->tanggal_lahir)
-                <p class="text-sm text-gray-300 mt-1">
-                    {{ optional($user->profile)->tanggal_lahir->format('F Y') }} 
-                    <!-- {{ optional($user->profile)->tanggal_lahir->age }} years old -->
-                </p>
-            @endif
             </div>
 
+            <!-- Profile Information Section -->
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    @include('profile.partials.update-profile-information-form')
+                </div>
+            </div>
 
-        {{-- Personal Information --}}
-        <div class="mt-8 bg-white/5 rounded-lg p-6 border border-white/10">
-            <h3 class="text-xl font-semibold text-white mb-4">Personal Information</h3>
-            <p class="text-sm text-gray-300 mb-6">You can change your personal information settings here</p>
-            @include('profile.partials.update-profile-information-form', ['user' => $user])
-        </div>
+            <!-- Update Password Section -->
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    @include('profile.partials.update-password-form')
+                </div>
+            </div>
 
-        {{-- Profile Details --}}
-        <div class="mt-8 bg-white/5 rounded-lg p-6 border border-white/10">
-            <h3 class="text-xl font-semibold text-white mb-4">Profile Details</h3>
-            @include('profile.partials.update-profile-detail-form', ['user' => $user])
-        </div>
-
-        {{-- Update Password --}}
-        <div class="mt-8 bg-white/5 rounded-lg p-6 border border-white/10">
-            <h3 class="text-xl font-semibold text-white mb-4">Update Password</h3>
-            @include('profile.partials.update-password-form')
-        </div>
-
-        {{-- Delete Account --}}
-        <div class="mt-8 bg-white/5 rounded-lg p-6 border border-red-500/30">
-            <h3 class="text-xl font-semibold text-red-400 mb-4">Delete Account</h3>
-            @include('profile.partials.delete-user-form')
-        </div>
-
-        <div>
-        <!-- Authentication -->
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button :href="route('logout')"
-                        onclick="event.preventDefault();
-                                    this.closest('form').submit();">
-                    {{ __('Log Out') }}
-                </button>
-            </form>
+            <!-- Delete Account Section -->
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    @include('profile.partials.delete-user-form')
+                </div>
+            </div>
         </div>
     </div>
-
 </x-app-layout>

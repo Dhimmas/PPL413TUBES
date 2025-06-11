@@ -5,7 +5,9 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 
+                    'resources/css/theme.css',
                     'resources/js/app.js', 
+                    'resources/js/theme.js',
                     'resources/js/quiz_attempt.js' 
                    ],
             refresh: true,

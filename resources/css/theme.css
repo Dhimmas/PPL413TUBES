@@ -1,0 +1,338 @@
+/* CSS Variables for Light & Dark Mode */
+:root[data-theme="light"] {
+    /* Background Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #e2e8f0;
+    --bg-accent: #f1f5f9;
+    
+    /* Text Colors */
+    --text-primary: #1a202c;
+    --text-secondary: #2d3748;
+    --text-tertiary: #4a5568;
+    --text-muted: #718096;
+    --text-inverse: #ffffff;
+    
+    /* Border Colors */
+    --border-primary: #e2e8f0;
+    --border-secondary: #cbd5e0;
+    --border-accent: #a0aec0;
+    
+    /* Card & Component Colors */
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --card-shadow: rgba(0, 0, 0, 0.1);
+    
+    /* Navigation Colors */
+    --nav-bg: rgba(255, 255, 255, 0.95);
+    --nav-text: #2d3748;
+    --nav-text-hover: #4299e1;
+    --nav-border: rgba(226, 232, 240, 0.8);
+    
+    /* Page Specific Background Overrides */
+    --page-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f8fafc 100%);
+    --glassmorphism-bg: rgba(255, 255, 255, 0.1);
+    --glassmorphism-border: rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme="dark"] {
+    /* Background Colors */
+    --bg-primary: #020B13;
+    --bg-secondary: #021C2D;
+    --bg-tertiary: #03263C;
+    --bg-accent: #2d3748;
+    
+    /* Text Colors */
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --text-tertiary: #cbd5e0;
+    --text-muted: #a0aec0;
+    --text-inverse: #1a202c;
+    
+    /* Border Colors */
+    --border-primary: #4a5568;
+    --border-secondary: #718096;
+    --border-accent: #a0aec0;
+    
+    /* Card & Component Colors */
+    --card-bg: #2d3748;
+    --card-border: #4a5568;
+    --card-shadow: rgba(0, 0, 0, 0.3);
+    
+    /* Navigation Colors */
+    --nav-bg: rgba(45, 55, 72, 0.95);
+    --nav-text: #e2e8f0;
+    --nav-text-hover: #63b3ed;
+    --nav-border: rgba(74, 85, 104, 0.8);
+    
+    /* Page Specific Background Overrides */
+    --page-bg-gradient: linear-gradient(135deg, #020B13 0%, #021C2D 50%, #03263C 100%);
+    --glassmorphism-bg: rgba(255, 255, 255, 0.1);
+    --glassmorphism-border: rgba(255, 255, 255, 0.2);
+}
+
+/* Force override untuk halaman dengan background hard-coded */
+[data-theme="light"] body {
+    background: var(--page-bg-gradient) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] body {
+    background: var(--page-bg-gradient) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Override untuk halaman app layout */
+[data-theme="light"] .min-h-screen {
+    background: var(--page-bg-gradient) !important;
+}
+
+[data-theme="dark"] .min-h-screen {
+    background: var(--page-bg-gradient) !important;
+}
+
+/* Override background gradients yang hard coded */
+[data-theme="light"] .bg-gradient-to-br {
+    background: var(--page-bg-gradient) !important;
+}
+
+[data-theme="dark"] .bg-gradient-to-br {
+    background: var(--page-bg-gradient) !important;
+}
+
+/* Glass morphism components */
+[data-theme="light"] .bg-white\/10,
+[data-theme="light"] .backdrop-blur-xl,
+[data-theme="light"] .backdrop-blur-lg {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .bg-white\/10,
+[data-theme="dark"] .backdrop-blur-xl,
+[data-theme="dark"] .backdrop-blur-lg {
+    background: var(--glassmorphism-bg) !important;
+    border: 1px solid var(--glassmorphism-border) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Override warna text yang hard coded */
+[data-theme="light"] .text-white,
+[data-theme="light"] .text-white\/90,
+[data-theme="light"] .text-white\/70,
+[data-theme="light"] .text-white\/60 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .text-gray-100,
+[data-theme="light"] .text-gray-200,
+[data-theme="light"] .text-gray-300 {
+    color: var(--text-secondary) !important;
+}
+
+/* Chat interface overrides */
+[data-theme="light"] .chat-container,
+[data-theme="light"] .chat-header,
+[data-theme="light"] .chat-body {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .chat-message.bot {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .chat-message.user {
+    background: #6366f1 !important;
+    color: white !important;
+}
+
+/* Pomodoro overrides */
+[data-theme="light"] .container {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .header,
+[data-theme="light"] .form-section,
+[data-theme="light"] .timer-section {
+    color: var(--text-primary) !important;
+}
+
+/* Form overrides */
+[data-theme="light"] .form-input,
+[data-theme="light"] .filter-btn,
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-primary) !important;
+}
+
+[data-theme="light"] .form-input:focus,
+[data-theme="light"] input:focus,
+[data-theme="light"] textarea:focus,
+[data-theme="light"] select:focus {
+    background-color: var(--bg-accent) !important;
+    border-color: var(--border-accent) !important;
+}
+
+/* Card components yang menggunakan white/10 */
+[data-theme="light"] .card,
+[data-theme="light"] .bg-gray-800,
+[data-theme="light"] .bg-gray-900,
+[data-theme="light"] .bg-slate-800,
+[data-theme="light"] .bg-slate-700 {
+    background-color: var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Navigation override for theme */
+nav {
+    background: var(--nav-bg) !important;
+    border-color: var(--nav-border) !important;
+    backdrop-filter: blur(12px);
+}
+
+/* Theme Toggle Button Styles */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-primary);
+    border-radius: 0.75rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.theme-toggle:hover {
+    background: var(--bg-secondary);
+    border-color: var(--border-accent);
+    transform: translateY(-1px);
+}
+
+.theme-toggle-icon {
+    font-size: 1.125rem;
+    transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover .theme-toggle-icon {
+    transform: scale(1.1);
+}
+
+/* Mobile theme toggle */
+.mobile-theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 1px solid var(--border-primary);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+.mobile-theme-toggle:hover {
+    background: var(--bg-secondary);
+}
+
+/* Override untuk status badge dan lainnya */
+[data-theme="light"] .text-slate-300,
+[data-theme="light"] .text-slate-400 {
+    color: var(--text-tertiary) !important;
+}
+
+[data-theme="light"] .border-slate-600,
+[data-theme="light"] .border-slate-700 {
+    border-color: var(--border-primary) !important;
+}
+
+/* Override untuk button dan komponen interaktif */
+[data-theme="light"] .hover\:bg-slate-700:hover,
+[data-theme="light"] .hover\:bg-slate-600:hover {
+    background-color: var(--bg-secondary) !important;
+}
+
+/* Smooth transitions for theme changes */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Override untuk komponen spesifik yang masih menggunakan warna gelap */
+[data-theme="light"] .bg-dark-800,
+[data-theme="light"] .bg-dark-700,
+[data-theme="light"] .bg-dark-900 {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .text-gray-500,
+[data-theme="light"] .text-gray-400 {
+    color: var(--text-muted) !important;
+}
+
+/* Override untuk quiz dan halaman lainnya */
+[data-theme="light"] .card-hover,
+[data-theme="light"] .fade-in {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Theme override untuk dropdown navigation */
+[data-theme="light"] .bg-slate-800\/95 {
+    background: rgba(248, 250, 252, 0.95) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .border-slate-600\/60 {
+    border-color: rgba(203, 213, 224, 0.6) !important;
+}
+
+[data-theme="light"] .border-slate-600\/50 {
+    border-color: rgba(203, 213, 224, 0.5) !important;
+}
+
+[data-theme="light"] .ring-slate-600\/50 {
+    --tw-ring-color: rgba(203, 213, 224, 0.5) !important;
+}
+
+[data-theme="light"] .text-gray-100 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .hover\:bg-slate-700\/70:hover {
+    background: rgba(241, 245, 249, 0.7) !important;
+}
+
+[data-theme="dark"] .bg-slate-800\/95 {
+    background: rgba(30, 41, 59, 0.95) !important;
+}
+
+[data-theme="dark"] .border-slate-600\/60 {
+    border-color: rgba(75, 85, 99, 0.6) !important;
+}
+
+[data-theme="dark"] .border-slate-600\/50 {
+    border-color: rgba(75, 85, 99, 0.5) !important;
+}
+
+[data-theme="dark"] .ring-slate-600\/50 {
+    --tw-ring-color: rgba(75, 85, 99, 0.5) !important;
+}
+
+[data-theme="dark"] .hover\:bg-slate-700\/70:hover {
+    background: rgba(51, 65, 85, 0.7) !important;
+}

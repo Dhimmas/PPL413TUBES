@@ -1485,14 +1485,9 @@
         {
             "name": "laravel/sanctum",
             "version": "v4.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/sanctum.git",
-                "reference": "a360a6a1fd2400ead4eb9b6a9c1bb272939194f5"
-            },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sanctum/zipball/a360a6a1fd2400ead4eb9b6a9c1bb272939194f5",
+                "url": "https://mirrors.cloud.tencent.com/repository/composer/laravel/sanctum/v4.1.1/laravel-sanctum-v4.1.1.zip",
                 "reference": "a360a6a1fd2400ead4eb9b6a9c1bb272939194f5",
                 "shasum": ""
             },
@@ -1524,7 +1519,6 @@
                     "Laravel\\Sanctum\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],

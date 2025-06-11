@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\Profile;
+use App\Http\Controllers\UserQuizController;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,17 +13,30 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    protected $userQuizController;
+
+    public function __construct(UserQuizController $userQuizController)
+    {
+        $this->userQuizController = $userQuizController;
+    }
+
     /**
      * Display the user's profile.
      */
     public function show(Request $request): View
     {
-        $user = $request->user();
-        $profile = $user->profile ?? (object)['profile_picture' => '/images/default-avatar.png'];
+        $user = $request->user()->load('profile');
+        
+        // Mendapatkan statistik activity menggunakan UserQuizController
+        $activityData = $this->userQuizController->getUserActivityOverview($user);
+        
+        // Mendapatkan statistik forum posts
+        $forumPostsCount = $user->forumPosts()->count();
         
         return view('profile.show', [
             'user' => $user,
-            'profile' => $profile,
+            'quizStats' => $activityData['quizStats'],
+            'forumPostsCount' => $forumPostsCount,
         ]);
     }
 
@@ -33,11 +46,14 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         $user = $request->user();
-        $profile = $user->profile; // Remove the fallback since we'll create it if needed
+        
+        // Mendapatkan statistik quiz activity menggunakan UserQuizController
+        $activityData = $this->userQuizController->getUserActivityOverview($user);
         
         return view('profile.edit', [
             'user' => $user,
-            'profile' => $profile,
+            'quizStats' => $activityData['quizStats'],
+            'uncompletedQuizzes' => $activityData['uncompletedQuizzes']
         ]);
     }
 
@@ -51,7 +67,7 @@ class ProfileController extends Controller
             'tanggal_lahir' => ['nullable', 'date'],
             'phone' => ['nullable', 'string', 'max:20'],
             'bio' => ['nullable', 'string', 'max:1000'],
-            'profile_picture' => ['nullable', 'image', 'max:2048'],
+            'profile_picture' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
         ]);
 
         $user = $request->user();
@@ -69,8 +85,11 @@ class ProfileController extends Controller
         }
 
         if ($profile) {
-            // Update existing profile
-            $profile->update($validated);
+            // Update existing profile - only update fields that are provided
+            $updateData = array_filter($validated, function($value) {
+                return $value !== null;
+            });
+            $profile->update($updateData);
         } else {
             // Create new profile
             $validated['user_id'] = $user->id;

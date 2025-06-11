@@ -15,6 +15,7 @@ use App\Models\Conversation;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\ForumBookmarkController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\StudyGoalController;
 
 
 // Redirect root ke welcome
@@ -79,7 +80,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/todos/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
     Route::put('/todos/status/{task}', [TodoController::class, 'updateStatus'])->name('todos.updateStatus');
     Route::patch('/todos/completed/{task}', [TodoController::class, 'updateCompleted'])->name('todos.updateCompleted');
-    Route::delete('/todos/{task}', [TodoController::class, 'destroy'])->name('todos.destroy');
 
     // Quiz Route
     Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
@@ -88,6 +88,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/quiz/result/{result}/finalize', [UserQuizController::class, 'finalizeQuiz'])->name('quiz.finalize');
     Route::get('/quiz/{quiz}/get-question/{questionNumber}', [UserQuizController::class, 'getQuestionByNumber'])->name('quiz.getQuestion');
     Route::get('/quiz/{quiz}/result', [UserQuizController::class, 'result'])->name('quiz.result');
+    Route::get('/quiz/{quiz}/ranking', [\App\Http\Controllers\Admin\QuizController::class, 'ranking'])->name('quiz.ranking');
+    
+    // Quiz Activity Overview (optional - untuk AJAX calls jika diperlukan)
+    Route::get('/quiz/activity/overview', [UserQuizController::class, 'getUserActivityOverview'])->name('quiz.activity.overview');
 
     Route::get('/pomodoro', [PomodoroController::class, 'index'])->name('pomodoro.index');
     Route::post('/pomodoro', [PomodoroController::class, 'store'])->name('pomodoro.store');
@@ -97,6 +101,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/tasks', [TaskController::class, 'store']);
     Route::post('/tasks/{id}/status/{status}', [TaskController::class, 'updateStatus']);
 
+    // Study Goals - Routes lengkap
+    Route::get('study-goals', [StudyGoalController::class, 'index'])->name('study-goals.index');
+    Route::get('study-goals/create', [StudyGoalController::class, 'create'])->name('study-goals.create');
+    Route::post('study-goals', [StudyGoalController::class, 'store'])->name('study-goals.store');
+    Route::get('study-goals/{id}/edit', [StudyGoalController::class, 'edit'])->name('study-goals.edit');
+    Route::put('study-goals/{id}', [StudyGoalController::class, 'update'])->name('study-goals.update');
+    Route::delete('study-goals/{id}', [StudyGoalController::class, 'destroy'])->name('study-goals.destroy');
+    Route::get('study-goals/today', [StudyGoalController::class, 'today'])->name('study-goals.today');
+    Route::get('study-goals/upcoming', [StudyGoalController::class, 'upcoming'])->name('study-goals.upcoming');
+    Route::get('study-goals/completed', [StudyGoalController::class, 'completed'])->name('study-goals.completed');
+    Route::put('/study-goals/{id}/complete', [StudyGoalController::class, 'complete'])->name('study-goals.complete');
+    Route::put('study-goals/{goal}/updateProgress', [StudyGoalController::class, 'updateProgress'])->name('study-goals.updateProgress');
 });
 
 
@@ -106,6 +122,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Nested resource khusus untuk soal di dalam quiz
     Route::get('quiz/{quiz}/questions/create', [QuestionController::class, 'create'])->name('questions.create');
     Route::post('quiz/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
+
+    // Question edit routes
+    Route::get('questions/{question}/edit', [QuestionController::class, 'edit'])->name('questions.edit');
+    Route::put('questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
+    Route::delete('questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
+
     // Rute untuk halaman riwayat chat
     Route::get('chatbot/chatbotz', [ChatController::class, 'index'])->name('chatbot.index');
     // Rute untuk mengirim pesan admin dan memperbarui respon chatbot

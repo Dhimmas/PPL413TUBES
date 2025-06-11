@@ -10,52 +10,42 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        
+        <!-- Flatpickr CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{{ asset('css/study-goals.css') }}">
 
-        <!-- Your custom CSS files -->
-        <link href="{{ asset('css/todo.css') }}" rel="stylesheet">
-        <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/quiz.css') }}">
-
-        <!-- Font Awesome CSS CDN -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-        <!-- Scripts (Vite akan meng-compile dan memuat app.css dan app.js) -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
-
-        @stack('head_scripts') 
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/css/theme.css', 'resources/js/app.js', 'resources/js/theme.js'])
+        
+        <!-- Additional Styles -->
+        @stack('styles')
     </head>
-    <body class="font-sans antialiased bg-[#021c2d]">
+    <body class="font-sans antialiased bg-gradient-to-br from-[#020B13] via-[#021C2D] to-[#03263C] min-h-screen">
+        <div class="min-h-screen bg-gradient-to-br from-[#020B13] via-[#021C2D] to-[#03263C]">
+            @include('layouts.navigation')
 
-        @include('layouts.navigation')
-
-        <div class="min-h-screen flex flex-col pt-16">
-
-            {{-- Header --}}
-            @isset($header)
-                <header class="bg-[#03263c] bg-opacity-80 backdrop-blur-sm shadow text-white">
+            <!-- Page Heading -->
+            @if (isset($header))
+                <header class="bg-white dark:bg-gray-800 shadow">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
-            @endisset
+            @endif
 
-            {{-- Main content --}}
-            <main class="flex-grow p-4">
+            <!-- Page Content -->
+            <main class="pt-16">
                 {{ $slot }}
             </main>
-
-            {{-- Footer --}}
-            <footer class="bg-gray-900 text-white py-6">
-                <div class="container mx-auto text-center">
-                    <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
-                </div>
-            </footer>
         </div>
-
-        <script src="{{ asset('js/todo.js') }}"></script>
-
+        
+        <!-- Additional Scripts -->
         @stack('scripts')
     </body>
 </html>

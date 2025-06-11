@@ -35,13 +35,14 @@ class UserQuizController extends Controller
         $questionsForCache = collect(); 
         $totalQuestions = $quiz->questions()->count();
 
-        if ($result) { // Lanjutkan kuis
+        if ($result) { 
             if ($result->ends_at && now()->isAfter($result->ends_at)) {
                 $finalScore = $this->calculateScore($result);
                 $result->update([
                     'score' => $finalScore,
                     'finished_at' => $result->ends_at,
-                    'status' => 'completed'
+                    'status' => 'completed',
+                    'is_finalized' => true
                 ]);
                 return redirect()->route('quiz.result', ['quiz' => $quiz->id])
                                 ->with('info', 'Waktu pengerjaan quiz telah habis.');
@@ -174,6 +175,25 @@ class UserQuizController extends Controller
         if (!$result) {
             return redirect()->route('dashboard')->with('error', 'Hasil quiz tidak ditemukan');
         }
+        if ($result->status === 'completed') {
+            $allQuestions = $result->quiz->questions;
+            $answeredQuestions = $result->answers->pluck('question_id')->toArray();
+            
+            // Jika ada soal yang belum dijawab, buat entry kosong
+            foreach ($allQuestions as $question) {
+                if (!in_array($question->id, $answeredQuestions)) {
+                    QuizAnswers::create([
+                        'quiz_result_id' => $result->id,
+                        'question_id' => $question->id,
+                        'user_answer' => 'Tidak dijawab',
+                        'is_correct' => false
+                    ]);
+                }
+            }
+            
+            // Reload result dengan answers yang lengkap
+            $result = $result->fresh(['quiz', 'answers.question']);
+        }
 
         return view('quiz.result', compact('result'));
     }
@@ -201,12 +221,102 @@ class UserQuizController extends Controller
         }
 
         $finalScore = $this->calculateScore($result);
+        
+        // Calculate completion time in minutes
+        $completionTimeMinutes = null;
+        if ($result->started_at) {
+            $completionTimeMinutes = round($result->started_at->diffInMinutes(now()), 2);
+        }
+        
         $result->update([
             'score' => $finalScore,
             'status' => 'completed',
             'finished_at' => now(),
+            'is_finalized' => true,
+            'completion_time_minutes' => $completionTimeMinutes
         ]);
 
         return response()->json(['status' => 'quiz_completed', 'redirect_url' => route('quiz.result', $result->quiz_id)]);
+    }
+
+    // Method untuk mendapatkan statistik quiz activity untuk user tertentu
+    public function getQuizActivityStats($user = null)
+    {
+        $user = $user ?: auth()->user();
+        
+        if (!$user) {
+            return [
+                'total_available_quizzes' => 0,
+                'completed_quizzes' => 0,
+                'in_progress_quizzes' => 0,
+                'total_attempts' => 0,
+                'average_score' => 0,
+                'completion_rate' => 0,
+                'recent_completed_quizzes' => collect()
+            ];
+        }
+        
+        $totalQuizzes = Quiz::has('questions')->count();
+        $completedQuizzes = $user->quizResults()->where('status', 'completed')->count();
+        $inProgressQuizzes = $user->quizResults()->where('status', 'in_progress')->count();
+        $totalAttempts = $user->quizResults()->count();
+        
+        // Menghitung rata-rata skor
+        $avgScore = $user->quizResults()
+            ->where('status', 'completed')
+            ->whereNotNull('score')
+            ->avg('score');
+        
+        // Quiz terbaru yang diselesaikan
+        $recentCompletedQuizzes = $user->quizResults()
+            ->with(['quiz' => function($query) {
+                $query->withCount('questions');
+            }])
+            ->where('status', 'completed')
+            ->latest('finished_at')
+            ->limit(5)
+            ->get();
+        
+        // Persentase completion
+        $completionRate = $totalQuizzes > 0 ? round(($completedQuizzes / $totalQuizzes) * 100, 1) : 0;
+        
+        return [
+            'total_available_quizzes' => $totalQuizzes,
+            'completed_quizzes' => $completedQuizzes,
+            'in_progress_quizzes' => $inProgressQuizzes,
+            'total_attempts' => $totalAttempts,
+            'average_score' => $avgScore ? round($avgScore, 1) : 0,
+            'completion_rate' => $completionRate,
+            'recent_completed_quizzes' => $recentCompletedQuizzes
+        ];
+    }
+
+    // Method untuk mendapatkan quiz yang belum dikerjakan untuk user tertentu
+    public function getUncompletedQuizzes($user = null, $limit = 3)
+    {
+        $user = $user ?: auth()->user();
+        
+        $completedQuizIds = $user->quizResults()
+            ->where('status', 'completed')
+            ->pluck('quiz_id')
+            ->toArray();
+            
+        return Quiz::whereNotIn('id', $completedQuizIds)
+            ->has('questions')
+            ->with('category')
+            ->withCount('questions')
+            ->limit($limit)
+            ->get();
+    }
+
+    // Method untuk mendapatkan activity overview (untuk dipanggil dari controller lain)
+    public function getUserActivityOverview($user = null)
+    {
+        $user = $user ?: auth()->user();
+        
+        return [
+            'quizStats' => $this->getQuizActivityStats($user),
+            'uncompletedQuizzes' => $this->getUncompletedQuizzes($user, 3)
+        ];
     }
 }

@@ -54,6 +54,27 @@ class QuizController extends Controller
             $UserQuizStatuses = Auth::user()->quizResults()->pluck('status','quiz_id')->toArray();
         }
 
+        if (auth()->check()) {
+            foreach ($quizzes as $quiz) {
+                $result = UserQuizResult::where('quiz_id', $quiz->id)
+                                            ->where('user_id', auth()->id())
+                                            ->latest()
+                                            ->first();
+                
+                if ($result) {
+                    if ($result->is_finalized) {
+                        $quiz->user_status = 'completed';
+                        $quiz->latest_result_id = $result->id;
+                    } else {
+                        $quiz->user_status = 'in_progress';
+                        $quiz->latest_result_id = $result->id;
+                    }
+                } else {
+                    $quiz->user_status = 'not_started';
+                }
+            }
+        }
+
         $categories = Category::all(); // Ambil semua kategori untuk dropdown filter
 
         // Mendapatkan kategori yang sedang aktif (jika ada)
@@ -76,7 +97,7 @@ class QuizController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'nullable|exists:categories,id',
             'new_category' => 'nullable|string|max:255|unique:categories,name',
-            'time_limit_per_quiz' => 'nullable|integer|min:1'
+            'time_limit_per_quiz' => 'nullable|integer|min:1' // Validasi ini sudah benar
         ]);
 
         // Handle kategori baru
@@ -110,37 +131,91 @@ class QuizController extends Controller
         return redirect()->route('admin.questions.create', $quiz->id)->with('success', 'Quiz berhasil dibuat. Sekarang tambahkan soal!');
     }
 
-    public function edit(string $id)
+    public function edit(Quiz $quiz)
     {
-        $quiz = Quiz::findOrFail($id);
         $categories = Category::all();
         return view('admin.quiz.edit', compact('quiz', 'categories'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, Quiz $quiz)
     {
         $validated = $request->validate([
-            'title' => 'required',
-            'description' => 'nullable',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'time_limit_per_quiz' => 'nullable|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category_id' => 'required|exists:categories,id',
-            'time_limit_per_quiz' => 'required|integer|min:1'
+            'category_id' => 'nullable|exists:categories,id',
+            'new_category' => 'nullable|string|max:255|unique:categories,name'
         ]);
-        $quiz = Quiz::findOrFail($id);
+
         $quiz->update($validated);
 
-        return redirect()->route('quiz.index')->with('success', 'quiz berhasil diperbarui');
+        return redirect()->route('admin.quiz.index')->with('success', 'Quiz berhasil diperbarui!');
     }
-    public function show($id)
+    
+    public function show(Quiz $quiz)
     {
-        $quiz = Quiz::with('questions')->findOrFail($id);
+        $quiz->load('questions');
         return view('admin.quiz.show', compact('quiz'));
     }
-
+    
     public function destroy(string $id)
     {
         $quiz = Quiz::findOrFail($id);
         $quiz->delete();
         return redirect()->route('quiz.index')->with('success', 'Quiz berhasil dihapus');
+    }
+    
+    public function ranking(Quiz $quiz)
+    {
+        // Get top performers with completion time
+        $topScorers = UserQuizResult::with('user')
+            ->where('quiz_id', $quiz->id)
+            ->where('status', 'completed')
+            ->whereNotNull('score')
+            ->orderByDesc('score')
+            ->orderBy('completion_time_minutes')
+            ->limit(10)
+            ->get();
+
+        // Get fastest completions
+        $fastestCompletions = UserQuizResult::with('user')
+            ->where('quiz_id', $quiz->id)
+            ->where('status', 'completed')
+            ->whereNotNull('completion_time_minutes')
+            ->orderBy('completion_time_minutes')
+            ->limit(10)
+            ->get();
+
+        // Get most recent completions
+        $recentCompletions = UserQuizResult::with('user')
+            ->where('quiz_id', $quiz->id)
+            ->where('status', 'completed')
+            ->whereNotNull('finished_at')
+            ->orderByDesc('finished_at')
+            ->limit(10)
+            ->get();
+
+        // Quiz statistics
+        $totalAttempts = UserQuizResult::where('quiz_id', $quiz->id)->count();
+        $completedAttempts = UserQuizResult::where('quiz_id', $quiz->id)->where('status', 'completed')->count();
+        $averageScore = UserQuizResult::where('quiz_id', $quiz->id)
+            ->where('status', 'completed')
+            ->avg('score');
+        $averageTime = UserQuizResult::where('quiz_id', $quiz->id)
+            ->where('status', 'completed')
+            ->whereNotNull('completion_time_minutes')
+            ->avg('completion_time_minutes');
+
+        return view('quiz.ranking', compact(
+            'quiz', 
+            'topScorers', 
+            'fastestCompletions', 
+            'recentCompletions',
+            'totalAttempts',
+            'completedAttempts',
+            'averageScore',
+            'averageTime'
+        ));
     }
 }

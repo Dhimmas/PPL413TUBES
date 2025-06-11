@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto mb-12 px-4 sm:px-6 lg:px-8"> {{-- Hapus mt-16 di sini --}}
+    <div class="max-w-7xl mx-auto mb-12 px-4 sm:px-6 lg:px-8">
         {{-- Header dengan Judul dan Tombol Tambah Quiz --}}
         <div class="flex flex-col sm:flex-row justify-between items-center mb-12 gap-8">
             <h1 class="text-5xl font-extrabold text-white tracking-tight leading-tight text-center sm:text-left">
@@ -69,7 +69,7 @@
                     </a>
                 @endif
 
-                {{-- Tombol Submit (hanya jika search diisi manual tanpa enter) --}}
+                {{-- Tombol Submit --}}
                 <button type="submit" class="mt-auto px-5 py-2 md:py-3 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition duration-200">
                     Filter
                 </button>
@@ -93,7 +93,7 @@
                             {{-- Placeholder jika tidak ada gambar --}}
                             <div class="bg-gray-700 rounded-xl h-48 flex items-center justify-center mb-4 shadow-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </div>
                         @endif
@@ -101,55 +101,142 @@
                         <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-teal-300 transition-colors duration-200">{{ $quiz->title }}</h2>
                         <p class="text-white/70 mb-4 line-clamp-3 leading-relaxed">{{ $quiz->description }}</p>
 
-                        <div class="flex justify-between items-center text-sm text-white/60 mb-5">
-                            <span class="inline-flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 7l10 10m0-10L7 17" />
+                        {{-- Quiz Info dengan Status Badge --}}
+                        <div class="flex justify-between items-center text-sm text-white/60 mb-4">
+                            <div class="flex items-center gap-4">
+                                <span class="inline-flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    {{ $quiz->questions_count }} Soal
+                                </span>
+                                @if($quiz->time_limit_per_quiz)
+                                    <span class="inline-flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        {{ $quiz->time_limit_per_quiz }} menit
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Quiz Status Badge --}}
+                        @auth
+                            @if(isset($quiz->user_status))
+                                <div class="mb-4">
+                                    @if($quiz->user_status === 'completed')
+                                        <span class="inline-flex items-center gap-2 bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm font-medium">
+                                            <i class="fas fa-check-circle"></i>
+                                            Quiz Selesai
+                                        </span>
+                                    @elseif($quiz->user_status === 'in_progress')
+                                        <span class="inline-flex items-center gap-2 bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-medium">
+                                            <i class="fas fa-play-circle"></i>
+                                            Sedang Dikerjakan
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm font-medium">
+                                            <i class="fas fa-plus-circle"></i>
+                                            Belum Dikerjakan
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
+                        @endauth
+
+                        {{-- Kategori --}}
+                        <div class="mb-4">
+                            <span class="inline-flex items-center gap-1 text-sm text-white/60">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                 </svg>
-                                Kategori: <span class="font-medium text-white/90">{{ $quiz->category?->name ?? 'Tidak Berkategori' }}</span>
-                            </span>
-                            <span class="inline-flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                {{ $quiz->questions_count }} Soal
+                                {{ $quiz->category?->name ?? 'Tidak Berkategori' }}
                             </span>
                         </div>
 
                         {{-- Action Buttons --}}
-                        <div class="flex flex-col gap-3">
-                        @if(isset($userQuizStatuses[$quiz->id]) && $userQuizStatuses[$quiz->id] == 'in_progress')
-                            {{-- Jika statusnya in_progress, tampilkan "Lanjutkan Quiz" --}}
-                            <a href="{{ route('quiz.attempt', $quiz->id) }}" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white text-center py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg transform hover:scale-105">
-                                Lanjutkan Quiz
-                            </a>
+                        <div class="space-y-2">
+                            {{-- Tombol Utama (Dynamic berdasarkan status) --}}
+                            @auth
+                                @if(isset($quiz->user_status))
+                                    @if($quiz->user_status === 'completed')
+                                        {{-- Quiz sudah selesai - tombol lihat hasil --}}
+                                        <a href="{{ route('quiz.result', $quiz->id) }}" 
+                                        class="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg transform hover:scale-105">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                            </svg>
+                                            Lihat Hasil
+                                        </a>
+                                    @elseif($quiz->user_status === 'in_progress')
+                                        {{-- Quiz sedang dikerjakan - tombol lanjutkan --}}
+                                        <a href="{{ route('quiz.attempt', $quiz->id) }}" 
+                                            class="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg transform hover:scale-105">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10v4a6 6 0 006 6v-3" />
+                                            </svg>
+                                            Lanjutkan Quiz
+                                        </a>
+                                    @else
+                                        {{-- Quiz belum dikerjakan - tombol mulai --}}
+                                        <a href="{{ route('quiz.attempt', $quiz->id) }}" 
+                                        class="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg transform hover:scale-105">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10v4a6 6 0 006 6v-3" />
+                                            </svg>
+                                            Mulai Quiz
+                                        </a>
+                                    @endif
+                                @endif
+                            @else
+                                {{-- User belum login --}}
+                                <a href="{{ route('login') }}" 
+                                   class="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                    </svg>
+                                    Login untuk Mulai
+                                </a>
+                            @endauth
 
-                        @elseif(isset($userQuizStatuses[$quiz->id]) && $userQuizStatuses[$quiz->id] == 'completed')
-                            {{-- Jika statusnya completed, tampilkan "Lihat Hasil" --}}
-                            <a href="{{ route('quiz.result', $quiz->id) }}" class="flex-1 bg-green-500 hover:bg-green-600 text-white text-center py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg">
-                                Lihat Hasil
-                            </a>
+                            {{-- Secondary Actions Row --}}
+                            <div class="flex gap-2">
+                                {{-- Admin Actions (dalam dropdown kecil) --}}
+                                @auth
+                                    @if(auth()->user()->is_admin)
+                                        <a href="{{ route('admin.quiz.show', $quiz->id) }}" 
+                                           class="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-center py-2 px-3 rounded-lg text-sm transition duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                            Manage
+                                        </a>
+                                    @endif
+                                @endauth
+                            </div>
 
-                        @else
-                            {{-- Jika belum pernah dikerjakan, tampilkan "Mulai Quiz" --}}
-                            <a href="{{ route('quiz.attempt', $quiz->id) }}" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white text-center py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg transform hover:scale-105">
-                                Mulai Quiz
-                            </a>
-                        @endif
-
+                            {{-- Admin Action Buttons (Full Row) --}}
                             @auth
                                 @if(auth()->user()->is_admin)
-                                    <a href="{{ route('admin.quiz.show', $quiz->id) }}" class="bg-gray-600 hover:bg-gray-700 text-white text-center py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg">
-                                        Lihat Detail (Admin)
-                                    </a>
-                                    <div class="flex gap-3">
-                                        <a href="{{ route('admin.quiz.edit', $quiz->id) }}" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-center py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg">
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('admin.quiz.edit', $quiz->id) }}" 
+                                           class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-3 rounded-lg text-sm transition duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
                                             Edit
                                         </a>
                                         <form action="{{ route('admin.quiz.destroy', $quiz->id) }}" method="POST" class="flex-1">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Yakin ingin menghapus quiz ini?')" class="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl transition duration-300 font-semibold shadow-md hover:shadow-lg">
+                                            <button type="submit" 
+                                                    onclick="return confirm('Yakin ingin menghapus quiz ini?')" 
+                                                    class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg text-sm transition duration-200">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
                                                 Hapus
                                             </button>
                                         </form>
