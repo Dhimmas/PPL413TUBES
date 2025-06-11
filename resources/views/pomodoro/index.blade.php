@@ -22,14 +22,18 @@
             .container {
                 max-width: 800px;
                 margin: 0 auto;
-                padding: 40px 20px 20px 20px;
-                padding-top: 6rem; /* <--- ruang untuk navbar fixed */
+                padding: 24px 20px 20px 20px; /* dari 40px jadi 24px */
+                padding-top: 4rem; /* dari 6rem jadi 4rem */
+                min-height: 80vh; /* agar tetap proporsional */
+                display: flex;
+                flex-direction: column;
+                justify-content: center; /* tengah vertikal */
             }
 
             /* Header Section */
             .header {
                 text-align: center;
-                margin-bottom: 40px;
+                margin-bottom: 24px; /* dari 40px jadi 24px */
             }
 
             .header-icon {

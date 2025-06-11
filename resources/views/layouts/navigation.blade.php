@@ -25,7 +25,7 @@
                     </x-nav-link>
 
                     {{-- Dropdown Fitur --}}
-                    <div class="relative" x-data="{ featuresOpen: false, goalsOpen: false }" @click.away="featuresOpen = false; goalsOpen = false">
+                    <div class="relative" x-data="{ featuresOpen: false, forumOpen: false, goalsOpen: false }" @click.away="featuresOpen = false; forumOpen = false; goalsOpen = false">
                         <button @click="featuresOpen = !featuresOpen" class="flex items-center px-4 py-3 border border-transparent text-sm leading-4 font-medium rounded-lg text-white/90 hover:text-blue-300 hover:bg-white/10 focus:outline-none transition-all duration-200 h-full group relative">
                             <div class="flex items-center">
                                 <span class="mr-2 text-lg">✨</span>
@@ -39,13 +39,13 @@
                             <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></div>
                         </button>
 
-                        <div x-show="featuresOpen" 
-                             x-transition:enter="transition ease-out duration-200" 
-                             x-transition:enter-start="opacity-0 scale-95 -translate-y-2" 
-                             x-transition:enter-end="opacity-100 scale-100 translate-y-0" 
-                             x-transition:leave="transition ease-in duration-150" 
-                             x-transition:leave-start="opacity-100 scale-100 translate-y-0" 
-                             x-transition:leave-end="opacity-0 scale-95 -translate-y-2" 
+                        <div x-show="featuresOpen"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
                              class="absolute z-50 mt-2 w-72 rounded-2xl shadow-2xl bg-slate-800/95 backdrop-blur-xl ring-1 ring-slate-600/50 focus:outline-none origin-top-right right-0 sm:left-0 border border-slate-600/60">
                             <div class="py-3">
                                 @foreach([
@@ -53,20 +53,53 @@
                                     ['📈', 'Progress', 'tasks.index'],
                                     ['🤖', 'Chatbot', 'user.chatbot.index'],
                                     ['🎓', 'Quiz', 'quiz.index'],
-                                    ['💬', 'Forum Diskusi', 'forum.index'],
                                     ['⏱️', 'Pomodoro', 'pomodoro.index'],
-                                    ['📚', 'Bookmarks', 'forum.bookmarks.index'],
                                 ] as [$icon, $label, $routeName])
                                     <x-dropdown-link :href="route($routeName)" class="text-gray-100 hover:bg-slate-700/70 hover:text-white px-4 py-3 transition-all duration-200 rounded-lg mx-2 flex items-center group">
                                         <span class="mr-3 text-lg group-hover:scale-110 transition-transform">{{ $icon }}</span>
                                         <span class="font-medium">{{ $label }}</span>
                                     </x-dropdown-link>
                                 @endforeach
-                                
-                                <div class="border-t border-slate-600/50 my-2 mx-2"></div>
-                                
-                                <div class="relative group mx-2">
-                                    <button @click.stop="goalsOpen = !goalsOpen" @mouseenter="goalsOpen = true" class="w-full text-left px-4 py-3 text-sm text-gray-100 hover:bg-slate-700/70 hover:text-white flex items-center justify-between transition-all duration-200 rounded-lg group/goals">
+
+                                {{-- Forum Diskusi Nested --}}
+                                <div class="relative group mx-2" x-data="{ forumOpen: false }" @mouseenter="forumOpen = true" @mouseleave="forumOpen = false">
+                                    <button type="button"
+                                            class="w-full text-left px-4 py-3 text-sm text-gray-100 hover:bg-slate-700/70 hover:text-white flex items-center justify-between transition-all duration-200 rounded-lg group/forum"
+                                            @click="forumOpen = !forumOpen">
+                                        <span class="flex items-center">
+                                            <span class="mr-3 text-lg group-hover/forum:scale-110 transition-transform">💬</span>
+                                            <span class="font-medium">Forum Diskusi</span>
+                                        </span>
+                                        <svg class="fill-current h-4 w-4 transform transition-transform duration-200" :class="{'rotate-90': forumOpen}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <div x-show="forumOpen"
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 scale-95 translate-x-2"
+                                         x-transition:enter-end="opacity-100 scale-100 translate-x-0"
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-100 scale-100 translate-x-0"
+                                         x-transition:leave-end="opacity-0 scale-95 translate-x-2"
+                                         class="absolute left-full top-0 ml-2 w-56 rounded-2xl shadow-2xl bg-slate-800/95 backdrop-blur-xl ring-1 ring-slate-600/50 z-60 border border-slate-600/60">
+                                        <div class="py-2">
+                                            <x-dropdown-link :href="route('forum.index')" class="text-gray-100 hover:bg-slate-700/70 hover:text-white text-sm px-4 py-2.5 flex items-center transition-all duration-200 rounded-lg mx-2 group">
+                                                <span class="mr-3 group-hover:scale-110 transition-transform">💬</span>
+                                                <span>Semua Diskusi</span>
+                                            </x-dropdown-link>
+                                            <x-dropdown-link :href="route('forum.bookmarks.index')" class="text-gray-100 hover:bg-slate-700/70 hover:text-white text-sm px-4 py-2.5 flex items-center transition-all duration-200 rounded-lg mx-2 group">
+                                                <span class="mr-3 group-hover:scale-110 transition-transform">📚</span>
+                                                <span>Bookmarks</span>
+                                            </x-dropdown-link>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Goals Nested Dropdown --}}
+                                <div class="relative group mx-2" x-data="{ goalsOpen: false }" @mouseenter="goalsOpen = true" @mouseleave="goalsOpen = false">
+                                    <button type="button"
+                                            class="w-full text-left px-4 py-3 text-sm text-gray-100 hover:bg-slate-700/70 hover:text-white flex items-center justify-between transition-all duration-200 rounded-lg group/goals"
+                                            @click="goalsOpen = !goalsOpen">
                                         <span class="flex items-center">
                                             <span class="mr-3 text-lg group-hover/goals:scale-110 transition-transform">🎯</span>
                                             <span class="font-medium">Study Goals</span>
@@ -75,22 +108,18 @@
                                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                                         </svg>
                                     </button>
-                                    
-                                    {{-- Nested dropdown --}}
-                                    <div x-show="goalsOpen" 
-                                         @mouseenter="goalsOpen = true" 
-                                         @mouseleave="goalsOpen = false"
-                                         x-transition:enter="transition ease-out duration-200" 
-                                         x-transition:enter-start="opacity-0 scale-95 translate-x-2" 
-                                         x-transition:enter-end="opacity-100 scale-100 translate-x-0" 
-                                         x-transition:leave="transition ease-in duration-150" 
-                                         x-transition:leave-start="opacity-100 scale-100 translate-x-0" 
-                                         x-transition:leave-end="opacity-0 scale-95 translate-x-2" 
+                                    <div x-show="goalsOpen"
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 scale-95 translate-x-2"
+                                         x-transition:enter-end="opacity-100 scale-100 translate-x-0"
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-100 scale-100 translate-x-0"
+                                         x-transition:leave-end="opacity-0 scale-95 translate-x-2"
                                          class="absolute left-full top-0 ml-2 w-56 rounded-2xl shadow-2xl bg-slate-800/95 backdrop-blur-xl ring-1 ring-slate-600/50 z-60 border border-slate-600/60">
                                         <div class="py-2">
                                             @foreach([
                                                 ['📊', 'Overview', 'study-goals.index'],
-                                                ['📅', 'Today\'s Goals', 'study-goals.today'],
+                                                ['📅', "Today's Goals", 'study-goals.today'],
                                                 ['⏰', 'Upcoming Goals', 'study-goals.upcoming'],
                                                 ['✅', 'Completed Goals', 'study-goals.completed'],
                                                 ['➕', 'Add New Goal', 'study-goals.create'],
