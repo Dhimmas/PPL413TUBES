@@ -71,6 +71,12 @@
             border: 1px solid rgba(139, 92, 246, 0.3);
         }
         
+        .status-admin {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
         .status-regular {
             background: rgba(75, 85, 99, 0.3);
             color: #d1d5db;
@@ -167,11 +173,11 @@
                     
                     <div class="flex gap-8">
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-blue-400">{{ $users->total() }}</div>
+                            <div class="text-3xl font-bold text-blue-400 stat-number">{{ $users->total() }}</div>
                             <div class="text-gray-300 text-sm">Total Users</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-purple-400">{{ $users->where('is_super_admin', true)->count() }}</div>
+                            <div class="text-3xl font-bold text-purple-400 stat-number">{{ $users->where('is_super_admin', true)->count() }}</div>
                             <div class="text-gray-300 text-sm">Super Admins</div>
                         </div>
                     </div>
@@ -215,34 +221,42 @@
                                             {{ strtoupper(substr($user->name, 0, 2)) }}
                                         </div>
                                         <div>
-                                            <div class="text-white font-medium">{{ $user->name }}</div>
+                                            <div class="text-white font-medium user-name">{{ $user->name }}</div>
                                             @if($user->id === Auth::id())
                                                 <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-500/20 text-blue-300 rounded-full">You</span>
                                             @endif
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-300">{{ $user->email }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-300 user-email">{{ $user->email }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-300">{{ $user->created_at->format('M d, Y') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="status-badge {{ $user->is_super_admin ? 'status-super-admin' : 'status-regular' }}">
-                                        {{ $user->is_super_admin ? 'Super Admin' : 'User' }}
-                                    </span>
+                                    @if($user->is_super_admin)
+                                        <span class="status-badge status-super-admin">Super Admin</span>
+                                    @elseif($user->is_admin)
+                                        <span class="status-badge status-admin">Admin</span>
+                                    @else
+                                        <span class="status-badge status-regular">User</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($user->id !== Auth::id())
-                                        <div class="flex space-x-2">
-                                            <button class="btn-toggle-admin px-3 py-2 bg-green-500/20 text-green-400 hover:bg-green-500/30 rounded-lg transition-all duration-200 text-sm font-medium" 
-                                                    data-user-id="{{ $user->id }}" 
-                                                    title="{{ $user->is_super_admin ? 'Remove Super Admin' : 'Make Super Admin' }}">
-                                                {{ $user->is_super_admin ? 'Remove Admin' : 'Make Admin' }}
-                                            </button>
-                                            <button class="btn-delete-user px-3 py-2 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-lg transition-all duration-200 text-sm font-medium" 
-                                                    data-user-id="{{ $user->id }}" 
-                                                    title="Delete User">
-                                                Delete
-                                            </button>
-                                        </div>
+                                        @if($user->is_super_admin)
+                                            <span class="text-gray-500 text-sm italic">Super Admin (Protected)</span>
+                                        @else
+                                            <div class="flex space-x-2">
+                                                <button class="btn-toggle-admin px-3 py-2 {{ $user->is_admin ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-green-500/20 text-green-400 hover:bg-green-500/30' }} rounded-lg transition-all duration-200 text-sm font-medium" 
+                                                        data-user-id="{{ $user->id }}" 
+                                                        title="{{ $user->is_admin ? 'Remove Admin' : 'Make Admin' }}">
+                                                    {{ $user->is_admin ? 'Remove Admin' : 'Make Admin' }}
+                                                </button>
+                                                <button class="btn-delete-user px-3 py-2 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-lg transition-all duration-200 text-sm font-medium" 
+                                                        data-user-id="{{ $user->id }}" 
+                                                        title="Delete User">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        @endif
                                     @else
                                         <span class="text-gray-500 text-sm italic">Cannot modify own account</span>
                                     @endif
@@ -284,8 +298,8 @@
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
                 userRows.forEach(row => {
-                    const userName = row.querySelector('.text-white.font-medium').textContent.toLowerCase();
-                    const userEmail = row.querySelector('.text-gray-300').textContent.toLowerCase();
+                    const userName = row.querySelector('.user-name').textContent.toLowerCase();
+                    const userEmail = row.querySelector('.user-email').textContent.toLowerCase();
                     row.style.display = (userName.includes(searchTerm) || userEmail.includes(searchTerm)) ? '' : 'none';
                 });
             });
@@ -359,8 +373,16 @@
                 hideModal();
             });
             
-            // AJAX Functions
+            // AJAX Functions with real-time updates
             function toggleSuperAdmin(userId) {
+                const userRow = document.querySelector(`[data-user-id="${userId}"]`);
+                const statusBadge = userRow.querySelector('.status-badge');
+                const toggleButton = userRow.querySelector('.btn-toggle-admin');
+                
+                // Add loading state
+                toggleButton.disabled = true;
+                toggleButton.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></div>';
+                
                 fetch(`/super-admin/users/${userId}/toggle-admin`, {
                     method: 'POST',
                     headers: {
@@ -371,32 +393,61 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        const userRow = document.querySelector(`[data-user-id="${userId}"]`);
-                        const statusBadge = userRow.querySelector('.status-badge');
-                        const toggleButton = userRow.querySelector('.btn-toggle-admin');
+                        // Update status badge with animation
+                        statusBadge.style.transform = 'scale(0.8)';
+                        statusBadge.style.opacity = '0.5';
                         
-                        if (data.is_super_admin) {
-                            statusBadge.textContent = 'Super Admin';
-                            statusBadge.className = 'status-badge status-super-admin';
-                            toggleButton.textContent = 'Remove Admin';
-                        } else {
-                            statusBadge.textContent = 'User';
-                            statusBadge.className = 'status-badge status-regular';
-                            toggleButton.textContent = 'Make Admin';
-                        }
+                        setTimeout(() => {
+                            if (data.is_admin) {
+                                statusBadge.textContent = 'Admin';
+                                statusBadge.className = 'status-badge status-admin';
+                                toggleButton.textContent = 'Remove Admin';
+                                toggleButton.className = 'btn-toggle-admin px-3 py-2 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-lg transition-all duration-200 text-sm font-medium';
+                                toggleButton.title = 'Remove Admin';
+                            } else {
+                                statusBadge.textContent = 'User';
+                                statusBadge.className = 'status-badge status-regular';
+                                toggleButton.textContent = 'Make Admin';
+                                toggleButton.className = 'btn-toggle-admin px-3 py-2 bg-green-500/20 text-green-400 hover:bg-green-500/30 rounded-lg transition-all duration-200 text-sm font-medium';
+                                toggleButton.title = 'Make Admin';
+                            }
+                            
+                            // Animate back to normal
+                            statusBadge.style.transform = 'scale(1)';
+                            statusBadge.style.opacity = '1';
+                            statusBadge.style.transition = 'all 0.3s ease';
+                            
+                            // Add success highlight
+                            userRow.style.background = 'rgba(34, 197, 94, 0.1)';
+                            setTimeout(() => {
+                                userRow.style.background = '';
+                                userRow.style.transition = 'background-color 0.5s ease';
+                            }, 1000);
+                            
+                        }, 200);
                         
+                        toggleButton.disabled = false;
                         showNotification(data.message, 'success');
+                        
+                        // Update stats in header
+                        updateStats();
                     } else {
+                        toggleButton.disabled = false;
+                        toggleButton.textContent = statusBadge.classList.contains('status-admin') ? 'Remove Admin' : 'Make Admin';
                         showNotification(data.error, 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    toggleButton.disabled = false;
+                    toggleButton.textContent = statusBadge.classList.contains('status-admin') ? 'Remove Admin' : 'Make Admin';
                     showNotification('An error occurred. Please try again.', 'error');
                 });
             }
             
             function deleteUser(userId) {
+                const userRow = document.querySelector(`[data-user-id="${userId}"]`);
+                
                 fetch(`/super-admin/users/${userId}`, {
                     method: 'DELETE',
                     headers: {
@@ -407,8 +458,16 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        const userRow = document.querySelector(`[data-user-id="${userId}"]`);
-                        userRow.remove();
+                        // Animate row removal
+                        userRow.style.transform = 'translateX(-100%)';
+                        userRow.style.opacity = '0';
+                        userRow.style.transition = 'all 0.3s ease';
+                        
+                        setTimeout(() => {
+                            userRow.remove();
+                            updateStats();
+                        }, 300);
+                        
                         showNotification(data.message, 'success');
                     } else {
                         showNotification(data.error, 'error');
@@ -420,16 +479,61 @@
                 });
             }
             
+            function updateStats() {
+                // Update user count statistics
+                const totalUsers = document.querySelectorAll('.user-row').length;
+                const admins = document.querySelectorAll('.status-admin').length;
+                
+                // Update the stats in header
+                const statNumbers = document.querySelectorAll('.stat-number');
+                if (statNumbers[0]) statNumbers[0].textContent = totalUsers;
+                if (statNumbers[1]) statNumbers[1].textContent = admins;
+            }
+            
             function showNotification(message, type) {
                 const notification = document.createElement('div');
                 notification.className = `notification ${type}`;
-                notification.textContent = message;
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="mr-3">
+                            ${type === 'success' ? 
+                                '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>' : 
+                                '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>'
+                            }
+                        </div>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                Object.assign(notification.style, {
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    padding: '16px 24px',
+                    borderRadius: '12px',
+                    color: 'white',
+                    fontWeight: '600',
+                    zIndex: '10000',
+                    transform: 'translateX(100%)',
+                    transition: 'transform 0.3s ease',
+                    backgroundColor: type === 'success' ? '#10b981' : '#ef4444',
+                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+                    border: `1px solid ${type === 'success' ? '#059669' : '#dc2626'}`
+                });
+                
                 document.body.appendChild(notification);
                 
-                setTimeout(() => notification.classList.add('show'), 100);
                 setTimeout(() => {
-                    notification.classList.remove('show');
-                    setTimeout(() => notification.remove(), 300);
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+                
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
                 }, 3000);
             }
         });

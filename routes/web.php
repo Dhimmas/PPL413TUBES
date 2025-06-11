@@ -32,6 +32,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
+    // Super Admin Routes
+    Route::middleware(['auth', 'super_admin'])->prefix('super-admin')->group(function () {
+        Route::get('/', [App\Http\Controllers\SuperAdminController::class, 'index'])->name('super-admin.index');
+        Route::post('/users/{user}/toggle-admin', [App\Http\Controllers\SuperAdminController::class, 'toggleSuperAdmin'])->name('super-admin.toggle-admin');
+        Route::delete('/users/{user}', [App\Http\Controllers\SuperAdminController::class, 'destroy'])->name('super-admin.delete-user');
+    });
+
     // Halaman statis
     Route::view('/to-do', 'maintenance')->name('to_do');
     Route::view('/goals', 'maintenance')->name('goals');

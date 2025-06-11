@@ -16,6 +16,7 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin', // Tambahkan jika belum ada
+        'is_super_admin', // Add this field
     ];
 
     protected $hidden = [
@@ -27,6 +28,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_admin' => 'boolean', // Tambahkan jika belum ada
+        'is_super_admin' => 'boolean', // Add this field
     ];
 
     // Tambahkan relasi profile
